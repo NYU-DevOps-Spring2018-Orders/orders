@@ -1,0 +1,21 @@
+# Main
+flake8
+Flask==0.12
+Flask-API==0.6.9
+Flask-SQLAlchemy==2.1
+pylint
+
+# PostgreSQL
+psycopg2
+SQLAlchemy==1.1.5
+
+# Used for testing
+httpie==0.9.9
+mock==2.0.0
+nose==1.3.7
+pinocchio==0.4.2
+rednose==1.2.1
+
+# Code coverage
+codecov==2.0.5
+coverage==4.2
