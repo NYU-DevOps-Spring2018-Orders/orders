@@ -6,6 +6,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 from api.items import items
+from api.orders import orders
 
 # from models.item import Item
 
@@ -16,6 +17,7 @@ db.create_all()
 
 # Register blueprints
 app.register_blueprint(items)
+app.register_blueprint(orders)
 
 # We'll just use SQLite here so we don't need an external database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/development.db'
