@@ -102,3 +102,6 @@ ENV/
 
 .DS_Store
 Thumbs.db
+
+.vagrant/
+./ubuntu-xenial-16.04-cloudimg-console.log
