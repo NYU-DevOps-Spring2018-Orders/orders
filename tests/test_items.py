@@ -41,6 +41,7 @@ class TestItems(unittest.TestCase):
     def test_create_an_item(self):
         """ Create a item and assert that it exists """
         item = Item(product_id=1, name="wrench", quantity=1, price=10.50)
+
         self.assertEqual(item.id, None)
         self.assertEqual(item.product_id, 1)
         self.assertEqual(item.name, "wrench")
@@ -85,6 +86,7 @@ class TestItems(unittest.TestCase):
         """ Test serialization of an Item """
         item = Item(product_id=1, name="wrench", quantity=1, price=10.50)
         data = item.serialize()
+
         self.assertNotEqual(data, None)
         self.assertIn('id', data)
         self.assertEqual(data['id'], None)
@@ -98,6 +100,69 @@ class TestItems(unittest.TestCase):
         self.assertIn('price', data)
         self.assertEqual(data['price'], 10.50)
 
+    def test_deserialize_an_item(self):
+        """ Test deserialization of an Item """
+        data = {"id": 1, "product_id": 1, "name": "wrench", "quantity": 1, "price": 10.50}
+        item = Item()
+        item.deserialize(data)
+
+        self.assertNotEqual(item, None)
+        self.assertEqual(item.id, None)
+        self.assertEqual(item.product_id, 1)
+        self.assertEqual(item.name, "wrench")
+        self.assertEqual(item.quantity, 1)
+        self.assertEqual(item.price, 10.50)
+
+    def test_fetch_all_items(self):
+        """ Test fetching all Items """
+        item = Item(product_id=1, name="wrench", quantity=1, price=10.50)
+        item.save()
+        item2 = Item(product_id=2, name="hammer", quantity=2, price=11)
+        item2.save()
+        Item.all()
+
+        self.assertEqual(len(Item.all()), 2)
+
+    def test_get_an_item(self):
+        """ Get an Item by id """
+        hammer = Item(product_id=2, name="hammer", quantity=2, price=11)
+        hammer.save()
+
+        item = Item.get(hammer.id)
+
+        self.assertEqual(item.id, hammer.id)
+        self.assertEqual(item.name, "hammer")
+
+    def test_non_dict_raises_error(self):
+        """ Pass invalid data structure deserialize """
+        data = [1,2,3]
+        item = Item()
+
+        with self.assertRaises(DataValidationError):
+            item.deserialize(data)
+
+    def test_invalid_key_raises_error(self):
+        """ Try to pass invalid key """
+        data = {"id": 1, "product_id": 1, "quantity": 1, "price": 10.50}
+
+        with self.assertRaises(DataValidationError):
+            item = Item()
+            item.deserialize(data)
+
+    def test_invalid_type_raises_error(self):
+        """ Try to pass invalid type """
+        data = {"id": 1, "product_id": 1, "name": "wrench" + 1, "quantity": 1, "price": 10.50}
+
+        with self.assertRaises(TypeError):
+            item = Item()
+            item.deserialize(data)
+
+    def test_repr(self):
+        """ Test that string representation is correct """
+        hammer = Item(product_id=2, name="hammer", quantity=2, price=11)
+        hammer.save()
+
+        self.assertEqual(hammer.__repr__(), "<Item u'hammer'>")
 
 ######################################################################
 #   M A I N
