@@ -61,8 +61,6 @@ class Item(db.Model):
         Raises:
             DataValidationError: when bad or missing data
         """
-        if not isinstance(data, dict):
-            raise DataValidationError('Invalid item: body of request contained bad or no data')
         try:
             self.product_id = data['product_id']
             self.name = data['name']

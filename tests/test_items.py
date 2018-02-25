@@ -149,14 +149,6 @@ class TestItems(unittest.TestCase):
             item = Item()
             item.deserialize(data)
 
-    def test_invalid_type_raises_error(self):
-        """ Try to pass invalid type """
-        data = {"id": 1, "product_id": 1, "name": "wrench" + 1, "quantity": 1, "price": 10.50}
-
-        with self.assertRaises(TypeError):
-            item = Item()
-            item.deserialize(data)
-
     def test_repr(self):
         """ Test that string representation is correct """
         hammer = Item(product_id=2, name="hammer", quantity=2, price=11)
