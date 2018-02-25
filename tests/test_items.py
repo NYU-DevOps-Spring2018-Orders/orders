@@ -31,8 +31,8 @@ class TestItems(unittest.TestCase):
         pass
 
     def setUp(self):
-        db.drop_all()    # clean up the last tests
-        db.create_all()  # make our sqlalchemy tables
+        db.drop_all()
+        db.create_all()
 
     def tearDown(self):
         db.session.remove()
@@ -41,12 +41,62 @@ class TestItems(unittest.TestCase):
     def test_create_an_item(self):
         """ Create a item and assert that it exists """
         item = Item(product_id=1, name="wrench", quantity=1, price=10.50)
-        self.assertTrue(item != None)
         self.assertEqual(item.id, None)
         self.assertEqual(item.product_id, 1)
         self.assertEqual(item.name, "wrench")
         self.assertEqual(item.quantity, 1)
         self.assertEqual(item.price, 10.50)
+
+    def test_add_an_item(self):
+        """ Create an Item and add it to the database """
+        items = Item.all()
+        self.assertEqual(items, [])
+        item = Item(product_id=1, name="wrench", quantity=1, price=10.50)
+        self.assertEqual(item.id, None)
+        item.save()
+
+        self.assertEqual(item.id, 1)
+        items = Item.all()
+        self.assertEqual(len(items), 1)
+
+    def test_update_an_item(self):
+        """ Update an Item """
+        item = Item(product_id=1, name="wrench", quantity=1, price=10.50)
+        item.save()
+        self.assertEqual(item.id, 1)
+
+        item.price = 12.0
+        item.save()
+
+        items = Item.all()
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0].price, 12.0)
+
+    def test_delete_an_item(self):
+        """ Delete an Item """
+        item = Item(product_id=1, name="wrench", quantity=1, price=10.50)
+        item.save()
+        self.assertEqual(len(Item.all()), 1)
+
+        item.delete()
+        self.assertEqual(len(Item.all()), 0)
+
+    def test_serialize_an_item(self):
+        """ Test serialization of an Item """
+        item = Item(product_id=1, name="wrench", quantity=1, price=10.50)
+        data = item.serialize()
+        self.assertNotEqual(data, None)
+        self.assertIn('id', data)
+        self.assertEqual(data['id'], None)
+
+        self.assertIn('product_id', data)
+        self.assertEqual(data['product_id'], 1)
+        self.assertIn('name', data)
+        self.assertEqual(data['name'], "wrench")
+        self.assertIn('quantity', data)
+        self.assertEqual(data['quantity'], 1)
+        self.assertIn('price', data)
+        self.assertEqual(data['price'], 10.50)
 
 
 ######################################################################
