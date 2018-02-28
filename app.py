@@ -8,12 +8,8 @@ from flask_sqlalchemy import SQLAlchemy
 from api.items import items
 from api.orders import orders
 
-# from models.item import Item
-
 # Create app and db
 app = Flask(__name__)
-db = SQLAlchemy(app)
-db.create_all()
 
 # Register blueprints
 app.register_blueprint(items)
@@ -26,7 +22,8 @@ app.config['SECRET_KEY'] = 'itsasecret'
 app.config['LOGGING_LEVEL'] = logging.INFO
 
 # Initialize SQLAlchemy
-#db = SQLAlchemy(app)
+db = SQLAlchemy(app)
+db.create_all()
 
 # Pull options from environment
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')

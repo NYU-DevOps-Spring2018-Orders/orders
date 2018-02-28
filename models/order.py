@@ -14,7 +14,7 @@ class Order(db.Model):
     __tablename__ = "orders"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     customer_id = db.Column(db.Integer, nullable=False)
-    date = db.Column(db.DateTime, nullable=False)
+    # date = db.Column(db.DateTime, nullable=False)
     shipped = db.Column(db.Boolean, nullable=False)
 
     def __repr__(self):
@@ -42,7 +42,7 @@ class Order(db.Model):
         return {
                 "id": self.id,
                 "customer_id": self.customer_id,
-                "date": self.date,
+                # "date": self.date,
                 "shipped": self.shipped
                 }
 
@@ -61,7 +61,7 @@ class Order(db.Model):
         """
         try:
             self.customer_id = data['customer_id']
-            self.date = data['date']
+            # self.date = data['date']
             self.shipped = data['shipped']
         except KeyError as error:
             raise DataValidationError('Invalid order: missing ' + error.args[0])
