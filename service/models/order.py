@@ -1,6 +1,6 @@
 import logging
 
-from app import db
+from service import db
 
 class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """

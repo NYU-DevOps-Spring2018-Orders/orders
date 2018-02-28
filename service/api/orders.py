@@ -5,9 +5,8 @@ from flask_api import status    # HTTP Status Codes
 
 orders = Blueprint('orders', __name__)
 
-from models import Order
+from service.models.order import Order
 from app import app
-# from app import db
 
 def check_content_type(content_type):
     """ Checks that the media type is correct """
@@ -54,6 +53,7 @@ def create_orders():
     check_content_type('application/json')
     order = Order()
 
+    # MARK - create Item for each item in request body array of items
     """
     test = request.get_json()
     a = test["test"]
@@ -64,8 +64,12 @@ def create_orders():
     order.deserialize(request.get_json())
     order.save()
     message = order.serialize()
-    location_url = url_for('get_orders', order_id=order.id, _external=True)
-    return make_response(jsonify(message), status.HTTP_201_CREATED,
-                         {
-                             'Location': location_url
-                         })
+
+    # MARK - was getting error on order_id=order.id
+    # location_url = url_for('get_orders', order_id=order.id, _external=True)
+    # return make_response(jsonify(message), status.HTTP_201_CREATED,
+    #                      {
+    #                          'Location': location_url
+    #                      })
+
+    return jsonify(message), status.HTTP_201_CREATED
