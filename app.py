@@ -5,28 +5,9 @@ import logging
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-from api.items import items
-from api.orders import orders
+from service import create_app, db
 
-# from models.item import Item
-
-# Create app and db
-app = Flask(__name__)
-db = SQLAlchemy(app)
-db.create_all()
-
-# Register blueprints
-app.register_blueprint(items)
-app.register_blueprint(orders)
-
-# We'll just use SQLite here so we don't need an external database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/development.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'itsasecret'
-app.config['LOGGING_LEVEL'] = logging.INFO
-
-# Initialize SQLAlchemy
-#db = SQLAlchemy(app)
+app = create_app()
 
 # Pull options from environment
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
@@ -61,4 +42,9 @@ if __name__ == "__main__":
     print " ORDERS SERVICE STARTING"
     print "========================================="
     initialize_logging(logging.INFO)
+
+    with app.app_context():
+        db.create_all()
+        db.session.commit()
+
     app.run(host='0.0.0.0', port=int(PORT), debug=DEBUG)
