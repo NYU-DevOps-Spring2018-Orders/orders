@@ -79,7 +79,7 @@ def index():
         }), status.HTTP_200_OK
 
 ######################################################################
-# LIST ALL PETS
+# LIST ALL ITEMS
 ######################################################################
 @app.route('/items', methods=['GET'])
 def list_items():
@@ -87,6 +87,17 @@ def list_items():
     items = Item.all()
 
     results = [item.serialize() for item in items]
+    return make_response(jsonify(results), status.HTTP_200_OK)
+
+######################################################################
+# LIST ALL ORDERS
+######################################################################
+@app.route('/orders', methods=['GET'])
+def list_orders():
+    """ Returns all of the Orders """
+    orders = Order.all()
+
+    results = [order.serialize() for order in orders]
     return make_response(jsonify(results), status.HTTP_200_OK)
 
 

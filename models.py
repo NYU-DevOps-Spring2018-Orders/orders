@@ -167,7 +167,7 @@ class Order(db.Model):
         """
         try:
             self.customer_id = data['customer_id']
-            # self.date = data['date']
+            self.date = data['date']
             self.shipped = data['shipped']
         except KeyError as error:
             raise DataValidationError('Invalid order: missing ' + error.args[0])
