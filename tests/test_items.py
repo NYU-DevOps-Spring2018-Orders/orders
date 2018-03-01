@@ -8,8 +8,8 @@ Test cases can be run with:
 
 import unittest
 import os
-from models.item import Item, DataValidationError
-from app import app, db
+from models import Item, DataValidationError, db
+from server import app
 
 DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///db/test.db')
 
@@ -31,8 +31,9 @@ class TestItems(unittest.TestCase):
         pass
 
     def setUp(self):
-        db.drop_all()
-        db.create_all()
+        Item.init_db(app)
+        db.drop_all()    # clean up the last tests
+        db.create_all()  # make our sqlalchemy tables
 
     def tearDown(self):
         db.session.remove()
