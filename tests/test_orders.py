@@ -10,8 +10,8 @@ import unittest
 import os
 from datetime import datetime
 
-from models.order import Order, DataValidationError
-from app import app, db
+from models import Order, DataValidationError, db
+from server import app
 
 DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///db/test.db')
 
@@ -33,8 +33,9 @@ class TestOrders(unittest.TestCase):
         pass
 
     def setUp(self):
-        db.drop_all()
-        db.create_all()
+        Order.init_db(app)
+        db.drop_all()    # clean up the last tests
+        db.create_all()  # make our sqlalchemy tables
 
     def tearDown(self):
         db.session.remove()
