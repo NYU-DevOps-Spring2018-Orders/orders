@@ -44,8 +44,9 @@ class TestServer(unittest.TestCase):
         db.create_all()  # create new tables
         date = datetime.now()
 
-        Item(product_id=1, name='hammer', quantity=1, price=11.50).save()
-        Item(product_id=2, name='toilet paper', quantity=2, price=2.50).save()
+        Item(order_id=1, product_id=1, name='hammer', quantity=1, price=11.50).save()
+        Item(order_id=1, product_id=2, name='toilet paper', quantity=2, price=2.50).save()
+        Item(order_id=2, product_id=3, name='beer', quantity=2, price=10.50).save()
         order = Order(customer_id=1, date=date, shipped=True).save()
         order = Order(customer_id=2, date=date, shipped=True).save()
         self.app = server.app.test_client()
@@ -66,7 +67,7 @@ class TestServer(unittest.TestCase):
         resp = self.app.get('/items')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data)
-        self.assertEqual(len(data), 2)
+        self.assertEqual(len(data), 3)
 
     def test_get_order_list(self):
         """ Get a list of Orders """
@@ -85,9 +86,48 @@ class TestServer(unittest.TestCase):
         resp = self.app.get('/orders/0')
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_create_order(self):
+        """ Create a new Order and items handling"""
+        # save the current number of orders for later comparison
+        order_count = self.get_order_count()
+        item_count = self.get_item_count()
+        # add a new order. order id is 3 since there are 2 orders initially
+        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'shipped': False}
+        new_order['items'] = [{"order_id": 3, "product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
+        data = json.dumps(new_order)
+        resp = self.app.post('/orders', data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # # Make sure location header is set
+        # location = resp.headers.get('Location', None)
+        # self.assertTrue(location != None)
+
+        # Check the data is correct by verifying that the customer_id and
+        # order_id are correct
+        new_json = json.loads(resp.data)
+        print type(new_json)
+        self.assertEqual(new_json['customer_id'], 1)
+        self.assertEqual(new_json['items'][0]["order_id"], 3)
+        self.assertEqual(len(new_json['items']), 1)
+        # check that count has gone up for orders which means it includes the new order
+        resp = self.app.get('/orders')
+        data = json.loads(resp.data)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(data), order_count + 1)
+        new_json_orders = new_json.copy()
+        new_json_orders.pop('items')
+        self.assertIn(new_json_orders, data)
+        # check that count has gone up for items which means it includes the new order
+        resp = self.app.get('/items')
+        data = json.loads(resp.data)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(data), item_count + 1)
+        new_json_items = new_json.pop('items')[0]
+        self.assertIn(new_json_items, data)
+        
 
 ######################################################################
-# Utility functions
+# UTILITY FUNCTIONS
 ######################################################################
 
     def get_item_count(self):
@@ -106,7 +146,7 @@ class TestServer(unittest.TestCase):
 
 
 ######################################################################
-#   M A I N
+# MAIN
 ######################################################################
 if __name__ == '__main__':
     unittest.main()

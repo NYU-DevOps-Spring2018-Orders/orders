@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 # Create the SQLAlchemy object to be initialized later in init_db()
@@ -16,6 +17,7 @@ class Item(db.Model):
 
     __tablename__ = "items"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
     product_id = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
@@ -45,13 +47,14 @@ class Item(db.Model):
         """
         return {
                 "id": self.id,
+                "order_id": self.order_id,
                 "product_id": self.product_id,
                 "name": self.name,
                 "quantity": self.quantity,
                 "price": self.price
                 }
 
-    def deserialize(self, data):
+    def deserialize(self, data, order_id):
         """
         Deserializes an Item from a dictionary
 
@@ -65,6 +68,7 @@ class Item(db.Model):
             DataValidationError: when bad or missing data
         """
         try:
+            self.order_id = order_id
             self.product_id = data['product_id']
             self.name = data['name']
             self.quantity = data['quantity']
@@ -72,7 +76,7 @@ class Item(db.Model):
         except KeyError as error:
             raise DataValidationError('Invalid item: missing ' + error.args[0])
         except TypeError as error:
-            raise DataValidationError('Invalid item: body of request contained' \
+            raise DataValidationError('Invalid item: body of request contained ' \
                                       'bad or no data')
         return self
 
@@ -167,12 +171,12 @@ class Order(db.Model):
         """
         try:
             self.customer_id = data['customer_id']
-            self.date = data['date']
+            self.date = datetime.strptime(data['date'], "%Y-%m-%d %H:%M:%S.%f")
             self.shipped = data['shipped']
         except KeyError as error:
             raise DataValidationError('Invalid order: missing ' + error.args[0])
         except TypeError as error:
-            raise DataValidationError('Invalid order: body of request contained' \
+            raise DataValidationError('Invalid order: body of request contained ' \
                                       'bad or no data')
         return self
 

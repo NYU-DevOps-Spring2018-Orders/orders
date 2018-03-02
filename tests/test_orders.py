@@ -107,7 +107,7 @@ class TestOrders(unittest.TestCase):
 
     def test_deserialize_an_order(self):
         """ Test deserialization of an Order """
-        date = datetime.now()
+        date = str(datetime.now())
         data = {"id": 1, "customer_id": 1, "date": date, "shipped": 1}
         order = Order()
         order.deserialize(data)
@@ -115,7 +115,7 @@ class TestOrders(unittest.TestCase):
         self.assertNotEqual(order, None)
         self.assertEqual(order.id, None)
         self.assertEqual(order.customer_id, 1)
-        self.assertEqual(order.date, date)
+        self.assertEqual(str(order.date), date)
         self.assertEqual(order.shipped, True)
 
     def test_fetch_all_orders(self):
