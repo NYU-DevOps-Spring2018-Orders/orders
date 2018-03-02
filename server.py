@@ -136,6 +136,21 @@ def list_orders():
     results = [order.serialize() for order in orders]
     return make_response(jsonify(results), status.HTTP_200_OK)
 
+######################################################################
+# RETRIEVE A ORDER
+######################################################################
+@app.route('/orders/<int:order_id>', methods=['GET'])
+def get_orders(order_id):
+    """
+    Retrieve a single Order
+
+    This endpoint will return a Order based on it's id
+    """
+    order = Order.get(order_id)
+    if not order:
+        raise NotFound("Order with id '{}' was not found.".format(order_id))
+    return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
+
 
 ######################################################################
 # UTILITY FUNCTIONS

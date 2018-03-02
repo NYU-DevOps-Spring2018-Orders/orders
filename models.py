@@ -214,3 +214,13 @@ class Order(db.Model):
         """
         Order.logger.info('Processing lookup for id %s ...', order_id)
         return Order.query.get(order_id)
+
+    @staticmethod
+    def find_by_customer_id(customer_id):
+        """ Returns all Orders placed by the given customer
+
+        Args:
+            customer_id (integer): the customer's id
+        """
+        Order.logger.info('Processing customer_id query for %s ...', customer_id)
+        return Order.query.filter(Order.customer_id == customer_id)
