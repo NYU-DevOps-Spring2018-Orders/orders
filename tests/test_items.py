@@ -53,7 +53,7 @@ class TestItems(unittest.TestCase):
         """ Create an Item and add it to the database """
         items = Item.all()
         self.assertEqual(items, [])
-        item = Item(product_id=1, name="wrench", quantity=1, price=10.50)
+        item = Item(order_id=1, product_id=1, name="wrench", quantity=1, price=10.50)
         self.assertEqual(item.id, None)
         item.save()
 
@@ -63,7 +63,7 @@ class TestItems(unittest.TestCase):
 
     def test_update_an_item(self):
         """ Update an Item """
-        item = Item(product_id=1, name="wrench", quantity=1, price=10.50)
+        item = Item(order_id=1, product_id=1, name="wrench", quantity=1, price=10.50)
         item.save()
         self.assertEqual(item.id, 1)
 
@@ -76,7 +76,7 @@ class TestItems(unittest.TestCase):
 
     def test_delete_an_item(self):
         """ Delete an Item """
-        item = Item(product_id=1, name="wrench", quantity=1, price=10.50)
+        item = Item(order_id=1, product_id=1, name="wrench", quantity=1, price=10.50)
         item.save()
         self.assertEqual(len(Item.all()), 1)
 
@@ -85,13 +85,15 @@ class TestItems(unittest.TestCase):
 
     def test_serialize_an_item(self):
         """ Test serialization of an Item """
-        item = Item(product_id=1, name="wrench", quantity=1, price=10.50)
+        item = Item(order_id=1, product_id=1, name="wrench", quantity=1, price=10.50)
         data = item.serialize()
 
         self.assertNotEqual(data, None)
         self.assertIn('id', data)
         self.assertEqual(data['id'], None)
 
+        self.assertIn('order_id', data)
+        self.assertEqual(data['order_id'], 1)
         self.assertIn('product_id', data)
         self.assertEqual(data['product_id'], 1)
         self.assertIn('name', data)
@@ -104,11 +106,13 @@ class TestItems(unittest.TestCase):
     def test_deserialize_an_item(self):
         """ Test deserialization of an Item """
         data = {"id": 1, "product_id": 1, "name": "wrench", "quantity": 1, "price": 10.50}
+        order_id = 1
         item = Item()
-        item.deserialize(data)
+        item.deserialize(data, order_id)
 
         self.assertNotEqual(item, None)
         self.assertEqual(item.id, None)
+        self.assertEqual(item.order_id, 1)
         self.assertEqual(item.product_id, 1)
         self.assertEqual(item.name, "wrench")
         self.assertEqual(item.quantity, 1)
@@ -116,9 +120,9 @@ class TestItems(unittest.TestCase):
 
     def test_fetch_all_items(self):
         """ Test fetching all Items """
-        item = Item(product_id=1, name="wrench", quantity=1, price=10.50)
+        item = Item(order_id=1, product_id=1, name="wrench", quantity=1, price=10.50)
         item.save()
-        item2 = Item(product_id=2, name="hammer", quantity=2, price=11)
+        item2 = Item(order_id=1, product_id=2, name="hammer", quantity=2, price=11)
         item2.save()
         Item.all()
 
@@ -126,7 +130,7 @@ class TestItems(unittest.TestCase):
 
     def test_get_an_item(self):
         """ Get an Item by id """
-        hammer = Item(product_id=2, name="hammer", quantity=2, price=11)
+        hammer = Item(order_id=1, product_id=2, name="hammer", quantity=2, price=11)
         hammer.save()
 
         item = Item.get(hammer.id)
@@ -138,21 +142,23 @@ class TestItems(unittest.TestCase):
         """ Pass invalid data structure deserialize """
         data = [1,2,3]
         item = Item()
+        order_id = 1
 
         with self.assertRaises(DataValidationError):
-            item.deserialize(data)
+            item.deserialize(data, order_id)
 
     def test_invalid_key_raises_error(self):
         """ Try to pass invalid key """
         data = {"id": 1, "product_id": 1, "quantity": 1, "price": 10.50}
+        order_id = 1
 
         with self.assertRaises(DataValidationError):
             item = Item()
-            item.deserialize(data)
+            item.deserialize(data, order_id)
 
     def test_repr(self):
         """ Test that string representation is correct """
-        hammer = Item(product_id=2, name="hammer", quantity=2, price=11)
+        hammer = Item(order_id=1, product_id=2, name="hammer", quantity=2, price=11)
         hammer.save()
 
         self.assertEqual(hammer.__repr__(), "<Item u'hammer'>")

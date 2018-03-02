@@ -17,12 +17,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'please, tell nobody... Shhhh'
 app.config['LOGGING_LEVEL'] = logging.INFO
 
-# Initialize SQLAlchemy
-#db = SQLAlchemy(app)
-
 # Pull options from environment
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
 PORT = os.getenv('PORT', '5000')
+
 
 ######################################################################
 # Error Handlers
@@ -78,6 +76,43 @@ def index():
         'message': 'pong!'
         }), status.HTTP_200_OK
 
+
+######################################################################
+# ADD A NEW ORDER
+######################################################################
+@app.route('/orders', methods=['POST'])
+def create_order():
+    """
+    Creates an Order object based on the JSON posted
+    """
+    check_content_type('application/json')
+    order = Order()
+    json_post = request.get_json()
+
+    order.deserialize(json_post)
+    order.save()
+    message = order.serialize()
+
+    current_order_id = message['id']
+
+    # Want to get the items from POST and create items associated with order
+    items = json_post['items']
+    items_response = []
+    for item_dict in items:
+        item = Item()
+        item.deserialize(item_dict, current_order_id)
+        item.save()
+        items_response.append(item.serialize())
+
+    message['items'] = items_response
+
+    # location_url = url_for('get_orders', order_id=order.id, _external=True)
+    return make_response(jsonify(message), status.HTTP_201_CREATED,
+                         {
+                            # 'Location': location_url
+                         })
+
+
 ######################################################################
 # LIST ALL ITEMS
 ######################################################################
@@ -88,6 +123,7 @@ def list_items():
 
     results = [item.serialize() for item in items]
     return make_response(jsonify(results), status.HTTP_200_OK)
+
 
 ######################################################################
 # LIST ALL ORDERS
@@ -102,13 +138,13 @@ def list_orders():
 
 
 ######################################################################
-#  U T I L I T Y   F U N C T I O N S
+# UTILITY FUNCTIONS
 ######################################################################
 
 def init_db():
     """ Initialies the SQLAlchemy app """
     global app
-    Item.init_db(app)
+    # Item.init_db(app)
     Order.init_db(app)
 
 def check_content_type(content_type):
@@ -140,7 +176,7 @@ def initialize_logging(log_level=logging.INFO):
 
 
 ######################################################################
-#   M A I N
+# MAIN
 ######################################################################
 if __name__ == "__main__":
     print "========================================="
