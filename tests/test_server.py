@@ -76,6 +76,16 @@ class TestServer(unittest.TestCase):
         data = json.loads(resp.data)
         self.assertEqual(len(data), 2)
 
+    def test_get_order(self):
+        """ Get a single Order """
+        # get the id of a order
+        order = Order.find_by_customer_id(1)[0]
+        resp = self.app.get('/orders/{}'.format(order.id),
+                            content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(data['customer_id'], order.customer_id)
+
     def test_get_item_not_found(self):
         """ Get an item thats not found """
         resp = self.app.get('/items/0')

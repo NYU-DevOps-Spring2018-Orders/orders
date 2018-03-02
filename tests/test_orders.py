@@ -140,6 +140,15 @@ class TestOrders(unittest.TestCase):
         self.assertEqual(order.id, order1.id)
         self.assertEqual(order1.date, date)
 
+    def test_find_by_customer_id(self):
+        """ Find orders by customer_id """
+        date = datetime.now()
+        order = Order(customer_id=1, date=date, shipped=True)
+        order.save()
+        order1 = Order.find_by_customer_id(order.customer_id)
+        self.assertEqual(order1[0].customer_id, order.customer_id)
+        self.assertEqual(order1[0].date, date)
+
     def test_non_dict_raises_error(self):
         """ Pass invalid data structure deserialize """
         data = [1,2,3]
