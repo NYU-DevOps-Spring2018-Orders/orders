@@ -100,8 +100,13 @@ ENV/
 # mypy
 .mypy_cache/
 
+# Common OS files
 .DS_Store
 Thumbs.db
 
+# Vagrant misc files
 .vagrant/
 ./ubuntu-xenial-16.04-cloudimg-console.log
+
+# db test / dev files
+/db/
