@@ -140,6 +140,13 @@ class TestOrders(unittest.TestCase):
         self.assertEqual(order.id, order1.id)
         self.assertEqual(order1.date, date)
 
+    def test_get_or_404(self):
+        """ Test get order function with nonexistent ID """
+        date = datetime.now()
+        order = Order(customer_id=1, date=date, shipped=True)
+        order = Order.get(2)
+        self.assertEqual(order, None)
+
     def test_find_by_customer_id(self):
         """ Find orders by customer_id """
         date = datetime.now()
