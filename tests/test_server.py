@@ -86,6 +86,17 @@ class TestServer(unittest.TestCase):
         data = json.loads(resp.data)
         self.assertEqual(len(data), 2)
 
+    def test_get_order_item_list(self):
+        """ Get a list of Items from an Order """
+        order = Order.find_by_customer_id(1)[0]
+        print order.id
+        resp = self.app.get('/orders/{}/items'.format(order.id),
+                            content_type='application/json')
+        print json.loads(resp.data)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 2)
+
     def test_get_order(self):
         """ Get a single Order """
         # get the id of a order

@@ -178,6 +178,18 @@ def list_orders():
 
 
 ######################################################################
+# LIST ALL ITEMS FROM AN ORDER
+######################################################################
+@app.route('/orders/<int:order_id>/items', methods=['GET'])
+def list_items_from_an_order(order_id):
+    """ Returns all items from an Order """
+    items = Item.find_by_order_id(order_id)
+
+    results = [item.serialize() for item in items]
+    return make_response(jsonify(results), status.HTTP_200_OK)
+
+    
+######################################################################
 # DELETE AN ORDER
 ######################################################################
 @app.route('/orders/<int:order_id>', methods=['DELETE'])
