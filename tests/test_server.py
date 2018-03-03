@@ -86,14 +86,14 @@ class TestServer(unittest.TestCase):
         data = json.loads(resp.data)
         self.assertEqual(data['customer_id'], order.customer_id)
 
-    def test_get_item_not_found(self):
-        """ Get an item thats not found """
-        resp = self.app.get('/items/0')
-        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
-
     def test_get_order_not_found(self):
         """ Get an order thats not found """
         resp = self.app.get('/orders/0')
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_item_not_found(self):
+        """ Get an item thats not found """
+        resp = self.app.get('/items/0')
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_order(self):
@@ -144,9 +144,9 @@ class TestServer(unittest.TestCase):
         self.assertIn(new_json_items, data)
 
     def test_delete_order(self):
-        """ Delete an Order """
+        """ Test deleting an Order """
         order = Order.find_by_customer_id(1)[0]
-        # save the current number of orders for assertion
+        # Save the current number of orders for assertion
         order_count = self.get_order_count()
         resp = self.app.delete('/orders/{}'.format(order.id),
                                content_type='application/json')
@@ -154,6 +154,21 @@ class TestServer(unittest.TestCase):
         self.assertEqual(len(resp.data), 0)
         new_count = self.get_order_count()
         self.assertEqual(new_count, order_count - 1)
+
+    def test_delete_item(self):
+        """ Test deleting an Item """
+        item = Item()
+        # Using one of the existing test Items from setup
+        item.id = 2
+        # Save the current number of items for assertion
+        item_count = self.get_item_count()
+        resp = self.app.delete('/items/{}'.format(item.id),
+                               content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(resp.data), 0)
+        new_count = self.get_item_count()
+        self.assertEqual(new_count, item_count - 1)
+
 
 ######################################################################
 # UTILITY FUNCTIONS

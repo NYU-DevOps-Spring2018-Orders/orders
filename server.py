@@ -135,6 +135,22 @@ def get_orders(order_id):
 
 
 ######################################################################
+# RETRIEVE AN ITEM
+######################################################################
+@app.route('/items/<int:item_id>', methods=['GET'])
+def get_item(item_id):
+    """
+    Retrieve a single Item
+
+    This endpoint will return a Item based on it's id
+    """
+    item = Item.get(item_id)
+    if not item:
+        raise NotFound("Item with id '{}' was not found.".format(item_id))
+    return make_response(jsonify(item.serialize()), status.HTTP_200_OK)
+
+    
+######################################################################
 # LIST ALL ITEMS
 ######################################################################
 @app.route('/items', methods=['GET'])
@@ -162,7 +178,7 @@ def list_orders():
 # DELETE AN ORDER
 ######################################################################
 @app.route('/orders/<int:order_id>', methods=['DELETE'])
-def delete_orders(order_id):
+def delete_order(order_id):
     """
     Delete an Order
 
@@ -172,6 +188,23 @@ def delete_orders(order_id):
     order = Order.get(order_id)
     if order:
         order.delete()
+    return make_response('', status.HTTP_204_NO_CONTENT)
+
+
+######################################################################
+# DELETE AN ITEM FROM AN ORDER
+######################################################################
+@app.route('/items/<int:item_id>', methods=['DELETE'])
+def delete_item(item_id):
+    """
+    Delete an Item
+
+    This endpoint will delete an Item based on the id specified in
+    the path
+    """
+    item = Item.get(item_id)
+    if item:
+        item.delete()
     return make_response('', status.HTTP_204_NO_CONTENT)
 
 
