@@ -93,9 +93,11 @@ def create_order():
     order.save()
     message = order.serialize()
 
+    """
+    Want to get the items from POST and create items associated
+    with order
+    """
     current_order_id = message['id']
-
-    # Want to get the items from POST and create items associated with order
     items = json_post['items']
     items_response = []
     for item_dict in items:
@@ -103,14 +105,33 @@ def create_order():
         item.deserialize(item_dict, current_order_id)
         item.save()
         items_response.append(item.serialize())
-
+    """
+    The individual responses during the loop were added to a list
+    so that the responses can be added to the POST response
+    """
     message['items'] = items_response
 
-    # location_url = url_for('get_orders', order_id=order.id, _external=True)
+    location_url = url_for('get_orders', order_id=order.id, _external=True)
     return make_response(jsonify(message), status.HTTP_201_CREATED,
                          {
-                            # 'Location': location_url
+                            'Location': location_url
                          })
+
+
+######################################################################
+# RETRIEVE A ORDER
+######################################################################
+@app.route('/orders/<int:order_id>', methods=['GET'])
+def get_orders(order_id):
+    """
+    Retrieve a single Order
+
+    This endpoint will return a Order based on it's id
+    """
+    order = Order.get(order_id)
+    if not order:
+        raise NotFound("Order with id '{}' was not found.".format(order_id))
+    return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
 
 
 ######################################################################
@@ -136,20 +157,22 @@ def list_orders():
     results = [order.serialize() for order in orders]
     return make_response(jsonify(results), status.HTTP_200_OK)
 
-######################################################################
-# RETRIEVE A ORDER
-######################################################################
-@app.route('/orders/<int:order_id>', methods=['GET'])
-def get_orders(order_id):
-    """
-    Retrieve a single Order
 
-    This endpoint will return a Order based on it's id
+######################################################################
+# DELETE AN ORDER
+######################################################################
+@app.route('/orders/<int:order_id>', methods=['DELETE'])
+def delete_orders(order_id):
+    """
+    Delete an Order
+
+    This endpoint will delete an Order based on the id specified in
+    the path
     """
     order = Order.get(order_id)
-    if not order:
-        raise NotFound("Order with id '{}' was not found.".format(order_id))
-    return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
+    if order:
+        order.delete()
+    return make_response('', status.HTTP_204_NO_CONTENT)
 
 
 ######################################################################
