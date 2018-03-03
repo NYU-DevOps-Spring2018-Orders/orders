@@ -149,6 +149,30 @@ class TestOrders(unittest.TestCase):
         self.assertEqual(order1[0].customer_id, order.customer_id)
         self.assertEqual(order1[0].date, date)
 
+    def test_find_by_date(self):
+        """ Find orders by date """
+        date = datetime.now()
+        order = Order(customer_id=1, date=date, shipped=True)
+        order.save()
+        order1 = Order(customer_id=2, date=date, shipped=False)
+        order1.save()
+        order2 = Order.find_by_date(date)
+        self.assertEqual(order2[0].customer_id, order.customer_id)
+        self.assertEqual(order2[0].shipped, order.shipped)
+        self.assertEqual(order2[0].date, order.date)
+
+    def test_find_by_shipped(self):
+        """ Find orders by shipped """
+        date = datetime.now()
+        order = Order(customer_id=1, date=date, shipped=True)
+        order.save()
+        order1 = Order(customer_id=2, date=date, shipped=False)
+        order1.save()
+        order2 = Order.find_by_shipped(True)
+        self.assertEqual(order2[0].customer_id, order.customer_id)
+        self.assertEqual(order2[0].shipped, order.shipped)
+        self.assertEqual(order2[0].date, order.date)
+
     def test_non_dict_raises_error(self):
         """ Pass invalid data structure deserialize """
         data = [1,2,3]
