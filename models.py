@@ -115,6 +115,52 @@ class Item(db.Model):
         Item.logger.info('Processing lookup for id %s ...', item_id)
         return Item.query.get(item_id)
 
+    @staticmethod
+    def get_or_404(item_id):
+        """ Finds a Item by it's id """
+        Item.logger.info('Processing lookup or 404 for id %s ...', item_id)
+        return Item.query.get_or_404(item_id)
+
+    @staticmethod
+    def find_by_product_id(product_id):
+        """ Returns all Items with the given product_id
+
+        Args:
+            product_id (integer): the product_id of the Items you want to match
+        """
+        Item.logger.info('Processing product_id query for %s ...', product_id)
+        return Item.query.filter(Item.product_id == product_id)
+
+    @staticmethod
+    def find_by_name(name):
+        """ Return all Items with the given name
+
+        Args:
+            name (string): the name of the Items you want to match
+        """
+        Item.logger.info('Processing name query for %s ...', name)
+        return Item.query.filter(Item.name == name)
+
+    @staticmethod
+    def find_by_quantity(quantity):
+        """ Return all Items with the given quantity
+
+        Args:
+            quantity (integer): the quantity of the Items you want to match
+        """
+        Item.logger.info('Processing quantity query for %s ...', quantity)
+        return Item.query.filter(Item.quantity == quantity)
+
+    @staticmethod
+    def find_by_price(price):
+        """ Return all Items with the given price
+
+        Args:
+            price (float): the price of the Items you want to match
+        """
+        Item.logger.info('Processing price query for %s ...', price)
+        return Item.query.filter(Item.price == price)
+
 
 class Order(db.Model):
     """ Model for an Item """
@@ -216,6 +262,12 @@ class Order(db.Model):
         return Order.query.get(order_id)
 
     @staticmethod
+    def get_or_404(order_id):
+        """ Finds a Order by it's id """
+        Order.logger.info('Processing lookup or 404 for id %s ...', order_id)
+        return Order.query.get_or_404(order_id)
+
+    @staticmethod
     def find_by_customer_id(customer_id):
         """ Returns all Orders placed by the given customer
 
@@ -224,3 +276,24 @@ class Order(db.Model):
         """
         Order.logger.info('Processing customer_id query for %s ...', customer_id)
         return Order.query.filter(Order.customer_id == customer_id)
+
+    @staticmethod
+    def find_by_date(date):
+        """ Returns all Orders with the given date
+
+        Args:
+            date (DateTime): the date of the Orders you want to match
+        """
+        Order.logger.info('Processing date query for %s ...', date)
+        return Order.query.filter(Order.date == date)
+
+    @staticmethod
+    def find_by_shipped(shipped=True):
+        """ Query that finds Orders by their shipping status """
+        """ Returns all Orders by their shipping status
+
+        Args:
+            shipped (boolean): True for orders that are shipped
+        """
+        Order.logger.info('Processing available query for %s ...', shipped)
+        return Order.query.filter(Order.shipped == shipped)
