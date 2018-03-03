@@ -125,7 +125,6 @@ class TestServer(unittest.TestCase):
         # Check the data is correct by verifying that the customer_id and
         # order_id are correct
         new_json = json.loads(resp.data)
-        print type(new_json)
         self.assertEqual(new_json['customer_id'], 1)
         self.assertEqual(new_json['items'][0]["order_id"], 3)
         self.assertEqual(len(new_json['items']), 1)
@@ -163,7 +162,7 @@ class TestServer(unittest.TestCase):
         new_item = {'order_id': 1, 'product_id': 2, 'name': "wrench", 'quantity': 1, 'price': 11.50}
         data = json.dumps(new_item)
 
-        resp = self.app.put('/items/{}'.format(item.id), data=data, content_type='application/json')
+        resp = self.app.put('/orders/{}/items/{}'.format(new_item['order_id'], item.id), data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['name'], 'wrench')

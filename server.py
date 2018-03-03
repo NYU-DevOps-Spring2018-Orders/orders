@@ -188,8 +188,8 @@ def update_orders(order_id):
 ######################################################################
 # UPDATE AN ITEM
 ######################################################################
-@app.route('/items/<int:item_id>', methods=['PUT'])
-def update_items(item_id):
+@app.route('/orders/<int:order_id>/items/<int:item_id>', methods=['PUT'])
+def update_items(order_id, item_id):
     """
     Update an Item
 
@@ -199,7 +199,7 @@ def update_items(item_id):
     item = Item.get(item_id)
     if not item:
         raise NotFound("Item with id '{}' was not found.".format(item_id))
-    item.deserialize(request.get_json())
+    item.deserialize(request.get_json(), order_id)
     item.id = item_id
     item.save()
     return make_response(jsonify(item.serialize()), status.HTTP_200_OK)
