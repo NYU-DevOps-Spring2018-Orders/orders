@@ -206,21 +206,7 @@ def delete_item(item_id):
     if item:
         item.delete()
     return make_response('', status.HTTP_204_NO_CONTENT)
-
-######################################################################
-# RETRIEVE AN ITEM
-######################################################################
-@app.route('/items/<int:item_id>', methods=['GET'])
-def get_item(item_id):
-    """
-    Retrieve a single Item
-
-    This endpoint will return a Item based on it's id
-    """
-    item = Item.get(item_id)
-    if not item:
-        raise NotFound("Item with id '{}' was not found.".format(item_id))
-    return make_response(jsonify(item.serialize()), status.HTTP_200_OK)
+    
 
 ######################################################################
 # UPDATE AN ORDER
