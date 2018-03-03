@@ -9,6 +9,7 @@ Test cases can be run with:
 import unittest
 import os
 from models import Item, DataValidationError, db
+from werkzeug.exceptions import NotFound
 from server import app
 
 DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///db/test.db')
@@ -137,6 +138,10 @@ class TestItems(unittest.TestCase):
 
         self.assertEqual(item.id, hammer.id)
         self.assertEqual(item.name, "hammer")
+
+    def test_get_or_404(self):
+        """ Get_or_404 function with nonexistent ID """
+        self.assertRaises(NotFound, Item.get_or_404, 1)
 
     def test_find_by_product_id(self):
         """ Find Items by product_id"""

@@ -11,6 +11,7 @@ import os
 from datetime import datetime
 
 from models import Order, DataValidationError, db
+from werkzeug.exceptions import NotFound
 from server import app
 
 DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///db/test.db')
@@ -141,11 +142,8 @@ class TestOrders(unittest.TestCase):
         self.assertEqual(order1.date, date)
 
     def test_get_or_404(self):
-        """ Test get order function with nonexistent ID """
-        date = datetime.now()
-        order = Order(customer_id=1, date=date, shipped=True)
-        order = Order.get(2)
-        self.assertEqual(order, None)
+        """ Get_or_404 function with nonexistent ID """
+        self.assertRaises(NotFound, Order.get_or_404, 1)
 
     def test_find_by_customer_id(self):
         """ Find orders by customer_id """
