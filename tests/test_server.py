@@ -44,9 +44,9 @@ class TestServer(unittest.TestCase):
         db.create_all()  # create new tables
         date = datetime.now()
 
-        Item(order_id=1, product_id=1, name='hammer', quantity=1, price=11.50).save()
-        Item(order_id=1, product_id=2, name='toilet paper', quantity=2, price=2.50).save()
-        Item(order_id=2, product_id=3, name='beer', quantity=2, price=10.50).save()
+        item = Item(order_id=1, product_id=1, name='hammer', quantity=1, price=11.50).save()
+        item = Item(order_id=1, product_id=2, name='toilet paper', quantity=2, price=2.50).save()
+        item = Item(order_id=2, product_id=3, name='beer', quantity=2, price=10.50).save()
         order = Order(customer_id=1, date=date, shipped=True).save()
         order = Order(customer_id=2, date=date, shipped=True).save()
         self.app = server.app.test_client()
@@ -86,6 +86,16 @@ class TestServer(unittest.TestCase):
         data = json.loads(resp.data)
         self.assertEqual(data['customer_id'], order.customer_id)
 
+    def test_get_item(self):
+        """ Get a single Item """
+        # get the id of a item
+        item = Item.find_by_name('hammer')[0]
+        resp = self.app.get('/items/{}'.format(item.id),
+                            content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(data['price'], 11.5)
+
     def test_get_order_not_found(self):
         """ Get an order thats not found """
         resp = self.app.get('/orders/0')
@@ -117,7 +127,6 @@ class TestServer(unittest.TestCase):
         order_id are correct
         """
         new_json = json.loads(resp.data)
-        print type(new_json)
         self.assertEqual(new_json['customer_id'], 1)
         self.assertEqual(new_json['items'][0]["order_id"], 3)
         self.assertEqual(len(new_json['items']), 1)
@@ -142,6 +151,29 @@ class TestServer(unittest.TestCase):
         self.assertEqual(len(data), item_count + 1)
         new_json_items = new_json.pop('items')[0]
         self.assertIn(new_json_items, data)
+
+    def test_update_order(self):
+        """ Update an existing Order """
+        order = Order.find_by_customer_id(1)[0]
+        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'shipped': False}
+        new_order['items'] = [{"order_id": 3, "product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
+        data = json.dumps(new_order)
+
+        resp = self.app.put('/orders/{}'.format(order.id), data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        new_json = json.loads(resp.data)
+        self.assertEqual(new_json['shipped'], False)
+
+    def test_update_item(self):
+        """ Update an existing Item """
+        item = Item.find_by_name('toilet paper')[0]
+        new_item = {'order_id': 1, 'product_id': 2, 'name': "wrench", 'quantity': 1, 'price': 11.50}
+        data = json.dumps(new_item)
+
+        resp = self.app.put('/orders/{}/items/{}'.format(new_item['order_id'], item.id), data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        new_json = json.loads(resp.data)
+        self.assertEqual(new_json['name'], 'wrench')
 
     def test_delete_order(self):
         """ Test deleting an Order """
