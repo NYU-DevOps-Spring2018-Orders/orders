@@ -138,6 +138,54 @@ class TestItems(unittest.TestCase):
         self.assertEqual(item.id, hammer.id)
         self.assertEqual(item.name, "hammer")
 
+    def test_find_by_product_id(self):
+        """ Find Items by product_id"""
+        item = Item(order_id=1, product_id=1, name="wrench", quantity=1, price=10.50)
+        item.save()
+        item2 = Item(order_id=1, product_id=2, name="hammer", quantity=2, price=11)
+        item2.save()
+        items = Item.find_by_product_id(1)
+        self.assertEqual(items[0].product_id, 1)
+        self.assertEqual(items[0].name, "wrench")
+        self.assertEqual(items[0].quantity, 1)
+        self.assertEqual(items[0].price, 10.50)
+
+    def test_find_by_name(self):
+        """ Find Items by name"""
+        item = Item(order_id=1, product_id=1, name="wrench", quantity=1, price=10.50)
+        item.save()
+        item2 = Item(order_id=1, product_id=2, name="hammer", quantity=2, price=11)
+        item2.save()
+        items = Item.find_by_name("wrench")
+        self.assertEqual(items[0].product_id, 1)
+        self.assertEqual(items[0].name, "wrench")
+        self.assertEqual(items[0].quantity, 1)
+        self.assertEqual(items[0].price, 10.50)
+
+    def test_find_by_quantity(self):
+        """ Find Items by quantity"""
+        item = Item(order_id=1, product_id=1, name="wrench", quantity=1, price=10.50)
+        item.save()
+        item2 = Item(order_id=1, product_id=2, name="hammer", quantity=2, price=11)
+        item2.save()
+        items = Item.find_by_quantity(1)
+        self.assertEqual(items[0].product_id, 1)
+        self.assertEqual(items[0].name, "wrench")
+        self.assertEqual(items[0].quantity, 1)
+        self.assertEqual(items[0].price, 10.50)
+
+    def test_find_by_price(self):
+        """ Find Items by price"""
+        item = Item(order_id=1, product_id=1, name="wrench", quantity=1, price=10.50)
+        item.save()
+        item2 = Item(order_id=1, product_id=2, name="hammer", quantity=2, price=11)
+        item2.save()
+        items = Item.find_by_price(11)
+        self.assertEqual(items[0].product_id, 2)
+        self.assertEqual(items[0].name, "hammer")
+        self.assertEqual(items[0].quantity, 2)
+        self.assertEqual(items[0].price, 11)
+
     def test_non_dict_raises_error(self):
         """ Pass invalid data structure deserialize """
         data = [1,2,3]

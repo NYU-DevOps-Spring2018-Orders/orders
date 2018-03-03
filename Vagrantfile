@@ -9,7 +9,7 @@ Vagrant.configure(2) do |config|
     # set up network ip and port forwarding
     config.vm.network "forwarded_port", guest: 5000, host: 5000, host_ip: "127.0.0.1"
     config.vm.network "private_network", ip: "192.168.33.10"
-  
+
     config.vm.provider "virtualbox" do |vb|
       # Customize the amount of memory on the VM:
       vb.memory = "512"
@@ -18,17 +18,21 @@ Vagrant.configure(2) do |config|
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
     end
-  
+
     # Copy .gitconfig file so that git credentials are correct
     if File.exists?(File.expand_path("~/.gitconfig"))
       config.vm.provision "file", source: "~/.gitconfig", destination: "~/.gitconfig"
     end
-  
+
     # Copying ssh keys for github so that your git credentials work
     if File.exists?(File.expand_path("~/.ssh/id_rsa"))
       config.vm.provision "file", source: "~/.ssh/id_rsa", destination: "~/.ssh/id_rsa"
     end
-  
+
+    # Change the permission of files and directories
+    # so that nosetests runs without extra arguments.
+    config.vm.synced_folder ".", "/vagrant", mount_options: ["dmode=775,fmode=664"]
+
     # Enable provisioning with a shell script. Additional provisioners such as
     # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
     # documentation for more information about their specific syntax and use.
@@ -43,7 +47,7 @@ Vagrant.configure(2) do |config|
       cd /vagrant
       sudo pip install -r requirements.txt
     SHELL
-  
+
     # Add PostgreSQL docker container
     config.vm.provision "shell", inline: <<-SHELL
       # Prepare PostgreSQL data share
@@ -58,4 +62,3 @@ Vagrant.configure(2) do |config|
         args: "-d --name postgres -p 5432:5432 -v /var/lib/postgresql/data:/var/lib/postgresql/data"
     end
 end
-  
