@@ -132,6 +132,16 @@ class Item(db.Model):
         return Item.query.filter(Item.product_id == product_id)
 
     @staticmethod
+    def find_by_order_id(order_id):
+        """ Returns all Items with the given order_id
+
+        Args:
+            order_id (integer): the order_id associated with a list of items
+        """
+        Item.logger.info('Processing order_id query for %s ...', order_id)
+        return Item.query.filter(Item.order_id == order_id)
+
+    @staticmethod
     def find_by_name(name):
         """ Return all Items with the given name
 

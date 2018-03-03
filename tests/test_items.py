@@ -155,6 +155,18 @@ class TestItems(unittest.TestCase):
         self.assertEqual(items[0].quantity, 1)
         self.assertEqual(items[0].price, 10.50)
 
+    def test_find_by_order_id(self):
+        """ Find Items by product_id"""
+        item = Item(order_id=1, product_id=1, name="wrench", quantity=1, price=10.50)
+        item.save()
+        item2 = Item(order_id=1, product_id=2, name="hammer", quantity=2, price=11)
+        item2.save()
+        items = Item.find_by_order_id(1)
+        self.assertEqual(items[0].product_id, 1)
+        self.assertEqual(items[0].name, "wrench")
+        self.assertEqual(items[1].quantity, 2)
+        self.assertEqual(items[1].price, 11.00)
+
     def test_find_by_name(self):
         """ Find Items by name"""
         item = Item(order_id=1, product_id=1, name="wrench", quantity=1, price=10.50)
