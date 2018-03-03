@@ -96,14 +96,14 @@ class TestServer(unittest.TestCase):
         data = json.loads(resp.data)
         self.assertEqual(data['price'], 11.5)
 
-    def test_get_item_not_found(self):
-        """ Get an item thats not found """
-        resp = self.app.get('/items/0')
-        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
-
     def test_get_order_not_found(self):
         """ Get an order thats not found """
         resp = self.app.get('/orders/0')
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_item_not_found(self):
+        """ Get an item thats not found """
+        resp = self.app.get('/items/0')
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_order(self):
@@ -118,17 +118,22 @@ class TestServer(unittest.TestCase):
         resp = self.app.post('/orders', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
 
-        # # Make sure location header is set
-        # location = resp.headers.get('Location', None)
-        # self.assertTrue(location != None)
+        # Make sure location header is set
+        location = resp.headers.get('Location', None)
+        self.assertTrue(location != None)
 
-        # Check the data is correct by verifying that the customer_id and
-        # order_id are correct
+        """
+        Check the data is correct by verifying that the customer_id and
+        order_id are correct
+        """
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['customer_id'], 1)
         self.assertEqual(new_json['items'][0]["order_id"], 3)
         self.assertEqual(len(new_json['items']), 1)
-        # check that count has gone up for orders which means it includes the new order
+        """
+        Check that response is correct for the order and that order count has
+        increased to reflect new order
+        """
         resp = self.app.get('/orders')
         data = json.loads(resp.data)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
@@ -136,7 +141,10 @@ class TestServer(unittest.TestCase):
         new_json_orders = new_json.copy()
         new_json_orders.pop('items')
         self.assertIn(new_json_orders, data)
-        # check that count has gone up for items which means it includes the new order
+        """
+        Check that response is correct for the order's items and that
+        item count has increased to reflect items in the new order
+        """
         resp = self.app.get('/items')
         data = json.loads(resp.data)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
@@ -166,6 +174,32 @@ class TestServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['name'], 'wrench')
+
+    def test_delete_order(self):
+        """ Test deleting an Order """
+        order = Order.find_by_customer_id(1)[0]
+        # Save the current number of orders for assertion
+        order_count = self.get_order_count()
+        resp = self.app.delete('/orders/{}'.format(order.id),
+                               content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(resp.data), 0)
+        new_count = self.get_order_count()
+        self.assertEqual(new_count, order_count - 1)
+
+    def test_delete_item(self):
+        """ Test deleting an Item """
+        item = Item()
+        # Using one of the existing test Items from setup
+        item.id = 2
+        # Save the current number of items for assertion
+        item_count = self.get_item_count()
+        resp = self.app.delete('/items/{}'.format(item.id),
+                               content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(resp.data), 0)
+        new_count = self.get_item_count()
+        self.assertEqual(new_count, item_count - 1)
 
 
 ######################################################################
