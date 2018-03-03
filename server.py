@@ -71,14 +71,17 @@ def internal_server_error(error):
 ######################################################################
 @app.route('/')
 def index():
-    return jsonify({
-        'status': 'success',
-        'message': 'pong!'
-        }), status.HTTP_200_OK
+    """ Root URL response """
+    return jsonify(name='Orders REST API Service',
+                   version='1.0',
+                   paths=[url_for('list_orders', _external=True), 
+                          url_for('list_items', _external=True)],
+                   status = "success"
+                  ), status.HTTP_200_OK
 
 
 ######################################################################
-# ADD A NEW ORDER
+# CREATE A NEW ORDER
 ######################################################################
 @app.route('/orders', methods=['POST'])
 def create_order():
@@ -226,6 +229,7 @@ def update_orders(order_id):
     order.id = order_id
     order.save()
     return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
+
 
 ######################################################################
 # UPDATE AN ITEM
