@@ -19,6 +19,16 @@ import server
 
 DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///db/test.db')
 
+# Status Codes
+HTTP_200_OK = 200
+HTTP_201_CREATED = 201
+HTTP_204_NO_CONTENT = 204
+HTTP_400_BAD_REQUEST = 400
+HTTP_404_NOT_FOUND = 404
+HTTP_405_METHOD_NOT_ALLOWED = 405
+HTTP_409_CONFLICT = 409
+HTTP_415_UNSUPPORTED_MEDIA_TYPE = 415
+
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
@@ -152,6 +162,24 @@ class TestServer(unittest.TestCase):
         new_json_items = new_json.pop('items')[0]
         self.assertIn(new_json_items, data)
 
+    def test_create_wrong_content_type(self):
+        order_count = self.get_order_count()
+        item_count = self.get_item_count()
+        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'shipped': False}
+        new_order['items'] = [{"order_id": 3, "product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
+        data = json.dumps(new_order)
+        resp =self.app.post('/orders', data=data, content_type="text/plain")
+        self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+    def test_create_item_with_no_name(self):
+        order_count = self.get_order_count()
+        item_count = self.get_item_count()
+        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'shipped': False}
+        new_order['items'] = [{"order_id": 3, "product_id": 3, "quantity": 1, "price": "4.50"}]
+        data = json.dumps(new_order)
+        resp =self.app.post('/orders', data=data, content_type="application/json")
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_update_order(self):
         """ Update an existing Order """
         order = Order.find_by_customer_id(1)[0]
@@ -200,6 +228,11 @@ class TestServer(unittest.TestCase):
         self.assertEqual(len(resp.data), 0)
         new_count = self.get_item_count()
         self.assertEqual(new_count, item_count - 1)
+
+    def test_method_not_allowed(self):
+        """ Call a Method thats not Allowed """
+        resp = self.app.post('/orders/0')
+        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 ######################################################################
