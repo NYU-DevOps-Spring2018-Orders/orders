@@ -140,7 +140,7 @@ def list_orders():
 # RETRIEVE A ORDER
 ######################################################################
 @app.route('/orders/<int:order_id>', methods=['GET'])
-def get_orders(order_id):
+def get_order(order_id):
     """
     Retrieve a single Order
 
@@ -150,6 +150,59 @@ def get_orders(order_id):
     if not order:
         raise NotFound("Order with id '{}' was not found.".format(order_id))
     return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
+
+######################################################################
+# RETRIEVE AN ITEM
+######################################################################
+@app.route('/items/<int:item_id>', methods=['GET'])
+def get_item(item_id):
+    """
+    Retrieve a single Item
+
+    This endpoint will return a Item based on it's id
+    """
+    item = Item.get(item_id)
+    if not item:
+        raise NotFound("Item with id '{}' was not found.".format(item_id))
+    return make_response(jsonify(item.serialize()), status.HTTP_200_OK)
+
+######################################################################
+# UPDATE AN ORDER
+######################################################################
+@app.route('/orders/<int:order_id>', methods=['PUT'])
+def update_orders(order_id):
+    """
+    Update an Order
+
+    This endpoint will update an Order based the body that is posted
+    """
+    check_content_type('application/json')
+    order = Order.get(order_id)
+    if not order:
+        raise NotFound("Order with id '{}' was not found.".format(order_id))
+    order.deserialize(request.get_json())
+    order.id = order_id
+    order.save()
+    return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
+
+######################################################################
+# UPDATE AN ITEM
+######################################################################
+@app.route('/items/<int:item_id>', methods=['PUT'])
+def update_items(item_id):
+    """
+    Update an Item
+
+    This endpoint will update an Item based the body that is posted
+    """
+    check_content_type('application/json')
+    item = Item.get(item_id)
+    if not item:
+        raise NotFound("Item with id '{}' was not found.".format(item_id))
+    item.deserialize(request.get_json())
+    item.id = item_id
+    item.save()
+    return make_response(jsonify(item.serialize()), status.HTTP_200_OK)
 
 
 ######################################################################
