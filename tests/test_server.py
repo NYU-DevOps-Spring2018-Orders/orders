@@ -245,12 +245,7 @@ class TestServer(unittest.TestCase):
         resp = self.app.post('/orders/0')
         self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
-###################################################### 
-
-"""Not sure about this part"""   
-
-     # test cancel order-----------------------------
-     def test_cancel_order(self):
+    def test_cancel_order(self):
         """ cancel an existing Order """
         order = Order.find_by_customer_id(1)[0]
        
