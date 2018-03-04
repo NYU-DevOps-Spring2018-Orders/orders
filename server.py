@@ -266,11 +266,11 @@ def update_items(order_id, item_id):
 ######################################################################
 # CANCEL AN ORDER
 ######################################################################
-@app.route('/orders/<int:order_id>', methods=['CANCEL'])
+@app.route('/orders/<int:order_id>', methods=['DELETE'])
 def cancel_order(order_id):
     """
-    Delete an Order
-    This endpoint will delete an Order based on the id specified in
+    Cancel an Order
+    This endpoint will Cancel an Order based on the id specified in
     the path
     """
     order = Order.get(order_id)
