@@ -276,10 +276,8 @@ def cancel_order(order_id):
     order = Order.get(order_id)
     if order:
         order.delete()
-     my_resp = make_response('', status.HTTP_204_NO_CONTENT)
-     my_resp.headers['warning'] = Order has been canceled'
-     return my_resp
-
+        print('Order has been canceled')
+    return make_response('', status.HTTP_204_NO_CONTENT)
 
 ######################################################################
 # UTILITY FUNCTIONS
