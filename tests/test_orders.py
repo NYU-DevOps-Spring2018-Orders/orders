@@ -206,7 +206,7 @@ class TestOrders(unittest.TestCase):
     def test_cancel_an_order(self):
         """ Cancel an Order """
         date = datetime.now()
-        order = Order(customer_id=2, date=date, shipped=True)
+        order = Order(customer_id=2, date=date, shipped = False)
         order.save()
         self.assertEqual(len(Order.all()), 1)
 
