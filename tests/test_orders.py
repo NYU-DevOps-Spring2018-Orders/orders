@@ -202,6 +202,17 @@ class TestOrders(unittest.TestCase):
         order.save()
 
         self.assertEqual(order.__repr__(), "<Order>")
+        
+    def test_cancel_an_order(self):
+        """ Cancel an Order """
+        date = datetime.now()
+        order = Order(customer_id=2, date=date, shipped=True)
+        order.save()
+        self.assertEqual(len(Order.all()), 1)
+
+        order.delete()
+        self.assertEqual(len(Order.all()), 0)    
+        
 
 ######################################################################
 #   M A I N
