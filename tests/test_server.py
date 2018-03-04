@@ -244,18 +244,20 @@ class TestServer(unittest.TestCase):
         """ Call a Method thats not Allowed """
         resp = self.app.post('/orders/0')
         self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-    
-    def test_cancel_order(self):
-        """ Test canceling an Order """
-        order = Order.find_by_customer_id(2)[0]
-        # Save the current number of orders for assertion
-        order_count = self.get_order_count()
-        resp = self.app.delete('/orders/{}'.format(order.id),
-                               content_type='application/json')
-        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(len(resp.data), 0)
-        new_count = self.get_order_count()
-        self.assertEqual(new_count, order_count - 1)
+
+###################################################### 
+
+"""Not sure about this part"""   
+
+     # test cancel order-----------------------------
+     def test_cancel_order(self):
+        """ cancel an existing Order """
+        order = Order.find_by_customer_id(1)[0]
+       
+        resp = self.app.cancel('/orders/{}'.format(order.id),content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        orderCancel = order.cancel  ## ??order['cancel']
+        self.assertEqual(orderCancel, True)
 
 
 ######################################################################
