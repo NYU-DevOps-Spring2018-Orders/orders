@@ -202,6 +202,8 @@ class TestOrders(unittest.TestCase):
         order.save()
 
         self.assertEqual(order.__repr__(), "<Order>")
+          
+        
 
 ######################################################################
 #   M A I N

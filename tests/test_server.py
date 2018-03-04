@@ -245,6 +245,15 @@ class TestServer(unittest.TestCase):
         resp = self.app.post('/orders/0')
         self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
+    def test_cancel_order(self):
+        """ cancel an existing Order """
+        order = Order.find_by_customer_id(1)[0]
+       
+        resp = self.app.cancel('/orders/{}'.format(order.id),content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        orderCancel = order.cancel  ## ??order['cancel']
+        self.assertEqual(orderCancel, True)
+
 
 ######################################################################
 # UTILITY FUNCTIONS

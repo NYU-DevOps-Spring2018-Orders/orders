@@ -181,7 +181,7 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     customer_id = db.Column(db.Integer, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
-    shipped = db.Column(db.Boolean, nullable=False)
+    cancel = db.Column(db.Boolean,nullable = False)
 
     def __repr__(self):
         return '<Order>'
@@ -209,7 +209,7 @@ class Order(db.Model):
                 "id": self.id,
                 "customer_id": self.customer_id,
                 "date": self.date,
-                "shipped": self.shipped
+                "cancel":self.cancel
                 }
 
     def deserialize(self, data):
@@ -228,7 +228,7 @@ class Order(db.Model):
         try:
             self.customer_id = data['customer_id']
             self.date = datetime.strptime(data['date'], "%Y-%m-%d %H:%M:%S.%f")
-            self.shipped = data['shipped']
+            self.cancel = data['cancel']
         except KeyError as error:
             raise DataValidationError('Invalid order: missing ' + error.args[0])
         except TypeError as error:

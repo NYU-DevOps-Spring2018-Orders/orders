@@ -264,6 +264,24 @@ def update_items(order_id, item_id):
 
 
 ######################################################################
+# CANCEL AN ORDER
+######################################################################
+@app.route('/orders/<int:order_id>', methods=['PUT'])
+def update_orders(order_id):
+    """
+    Cancel an Order
+
+    This endpoint will update an Order based the body that is posted
+    """
+    check_content_type('application/json')
+    order = Order.get(order_id)
+    if not order:
+        raise NotFound("Order with id '{}' was not found.".format(order_id))
+    order.cancel = True   ##????
+    order.save()
+    return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
+
+######################################################################
 # UTILITY FUNCTIONS
 ######################################################################
 
