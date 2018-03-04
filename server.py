@@ -269,7 +269,7 @@ def update_items(order_id, item_id):
 @app.route('/orders/<int:order_id>', methods=['PUT'])
 def update_orders(order_id):
     """
-    Update an Order
+    Cancel an Order
 
     This endpoint will update an Order based the body that is posted
     """
