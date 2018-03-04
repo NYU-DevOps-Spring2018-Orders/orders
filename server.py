@@ -264,6 +264,22 @@ def update_items(order_id, item_id):
 
 
 ######################################################################
+# CANCEL AN ORDER
+######################################################################
+@app.route('/orders/<int:order_id>', methods=['CANCEL'])
+def cancel_order(order_id):
+    """
+    Delete an Order
+    This endpoint will delete an Order based on the id specified in
+    the path
+    """
+    order = Order.get(order_id)
+    if order:
+        order.delete()
+    return make_response('Order has been canceled.', status.HTTP_204_NO_CONTENT)
+
+
+######################################################################
 # UTILITY FUNCTIONS
 ######################################################################
 
