@@ -2,3 +2,8 @@
   "customer_id": 1,
   "shipped": 1,
 }
+
+{
+  "customer_id": 2,
+  "shipped": 1,
+}
