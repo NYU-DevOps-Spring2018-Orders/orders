@@ -283,6 +283,7 @@ def cancel_orders(order_id):
     order.save()
     return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
 
+
 ######################################################################
 # UTILITY FUNCTIONS
 ######################################################################
