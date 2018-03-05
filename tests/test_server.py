@@ -57,8 +57,8 @@ class TestServer(unittest.TestCase):
         item = Item(order_id=1, product_id=1, name='hammer', quantity=1, price=11.50).save()
         item = Item(order_id=1, product_id=2, name='toilet paper', quantity=2, price=2.50).save()
         item = Item(order_id=2, product_id=3, name='beer', quantity=2, price=10.50).save()
-        order = Order(customer_id=1, date=date, shipped=True).save()
-        order = Order(customer_id=2, date=date, shipped=True).save()
+        order = Order(customer_id=1, date=date, status = 'processing').save()
+        order = Order(customer_id=2, date=date, status = 'processing').save()
         self.app = server.app.test_client()
 
     def tearDown(self):
@@ -133,7 +133,7 @@ class TestServer(unittest.TestCase):
         order_count = self.get_order_count()
         item_count = self.get_item_count()
         # add a new order. order id is 3 since there are 2 orders initially
-        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'shipped': False}
+        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'status': 'processing'}
         new_order['items'] = [{"order_id": 3, "product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
         data = json.dumps(new_order)
         resp = self.app.post('/orders', data=data, content_type='application/json')
@@ -176,7 +176,7 @@ class TestServer(unittest.TestCase):
     def test_create_wrong_content_type(self):
         order_count = self.get_order_count()
         item_count = self.get_item_count()
-        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'shipped': False}
+        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'status': 'processing'}
         new_order['items'] = [{"order_id": 3, "product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
         data = json.dumps(new_order)
         resp =self.app.post('/orders', data=data, content_type="text/plain")
@@ -185,7 +185,7 @@ class TestServer(unittest.TestCase):
     def test_create_item_with_no_name(self):
         order_count = self.get_order_count()
         item_count = self.get_item_count()
-        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'shipped': False}
+        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'status': 'processing'}
         new_order['items'] = [{"order_id": 3, "product_id": 3, "quantity": 1, "price": "4.50"}]
         data = json.dumps(new_order)
         resp =self.app.post('/orders', data=data, content_type="application/json")
@@ -194,25 +194,30 @@ class TestServer(unittest.TestCase):
     def test_update_order(self):
         """ Update an existing Order """
         order = Order.find_by_customer_id(1)[0]
-        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'shipped': False}
+        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'status': 'processing'}
         new_order['items'] = [{"order_id": 3, "product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
+        
         data = json.dumps(new_order)
 
         resp = self.app.put('/orders/{}'.format(order.id), data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
-        self.assertEqual(new_json['shipped'], False)
+        self.assertEqual(new_json['status'], 'processing')
 
-    def test_update_item(self):
-        """ Update an existing Item """
-        item = Item.find_by_name('toilet paper')[0]
-        new_item = {'order_id': 1, 'product_id': 2, 'name': "wrench", 'quantity': 1, 'price': 11.50}
-        data = json.dumps(new_item)
 
-        resp = self.app.put('/orders/{}/items/{}'.format(new_item['order_id'], item.id), data=data, content_type='application/json')
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+    ######################################################
+    # test cancel   
+
+    def test_cancel_order(self):
+        """cancel an existing Order """
+        resp = self.app.put('/orders/1/cancel', content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        #resp = self.app.put('/pets/1/purchase', content_type='application/json')
+        #self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
         new_json = json.loads(resp.data)
-        self.assertEqual(new_json['name'], 'wrench')
+        self.assertEqual(new_json['status'], 'cancel')
+
+  
 
     def test_delete_order(self):
         """ Test deleting an Order """
@@ -225,6 +230,21 @@ class TestServer(unittest.TestCase):
         self.assertEqual(len(resp.data), 0)
         new_count = self.get_order_count()
         self.assertEqual(new_count, order_count - 1)
+
+
+
+    def test_update_item(self):
+        """ Update an existing Item """
+        item = Item.find_by_name('toilet paper')[0]
+        new_item = {'order_id': 1, 'product_id': 2, 'name': "wrench", 'quantity': 1, 'price': 11.50}
+        data = json.dumps(new_item)
+
+        resp = self.app.put('/orders/{}/items/{}'.format(new_item['order_id'], item.id), data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        new_json = json.loads(resp.data)
+        self.assertEqual(new_json['name'], 'wrench')
+
+
 
     def test_delete_item(self):
         """ Test deleting an Item """
@@ -244,15 +264,6 @@ class TestServer(unittest.TestCase):
         """ Call a Method thats not Allowed """
         resp = self.app.post('/orders/0')
         self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def test_cancel_order(self):
-        """ cancel an existing Order """
-        order = Order.find_by_customer_id(1)[0]
-       
-        resp = self.app.cancel('/orders/{}'.format(order.id),content_type='application/json')
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        orderCancel = order.cancel  ## ??order['cancel']
-        self.assertEqual(orderCancel, True)
 
 
 ######################################################################
