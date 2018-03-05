@@ -266,20 +266,26 @@ def update_items(order_id, item_id):
 ######################################################################
 # CANCEL AN ORDER
 ######################################################################
-@app.route('/orders/<int:order_id>', methods=['PUT'])
-def update_orders(order_id):
+@app.route('/orders/<int:order_id>/cancel', methods=['PUT'])
+def cancel_orders(order_id):
     """
-    Cancel an Order
+    cancel an Order
 
     This endpoint will update an Order based the body that is posted
     """
-    check_content_type('application/json')
+    #check_content_type('application/json')
     order = Order.get(order_id)
     if not order:
-        raise NotFound("Order with id '{}' was not found.".format(order_id))
-    order.cancel = True   ##????
+        abort(HTTP_404_NOT_FOUND, "Order with id '{}' was not found.".format(order_id))
+    #if not order:
+    #    raise NotFound("Order with id '{}' was not found.".format(order_id))
+    order.status = 'cancel'  
     order.save()
     return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
+
+
+
+
 
 ######################################################################
 # UTILITY FUNCTIONS
