@@ -196,17 +196,11 @@ class TestServer(unittest.TestCase):
         order = Order.find_by_customer_id(1)[0]
         new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'status': 'processing'}
         new_order['items'] = [{"order_id": 3, "product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
-        
         data = json.dumps(new_order)
-
         resp = self.app.put('/orders/{}'.format(order.id), data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['status'], 'processing')
-
-
-    ######################################################
-    # test cancel   
 
     def test_cancel_order(self):
         """cancel an existing Order """
@@ -216,8 +210,6 @@ class TestServer(unittest.TestCase):
         #self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['status'], 'cancel')
-
-  
 
     def test_delete_order(self):
         """ Test deleting an Order """
@@ -231,20 +223,15 @@ class TestServer(unittest.TestCase):
         new_count = self.get_order_count()
         self.assertEqual(new_count, order_count - 1)
 
-
-
     def test_update_item(self):
         """ Update an existing Item """
         item = Item.find_by_name('toilet paper')[0]
         new_item = {'order_id': 1, 'product_id': 2, 'name': "wrench", 'quantity': 1, 'price': 11.50}
         data = json.dumps(new_item)
-
         resp = self.app.put('/orders/{}/items/{}'.format(new_item['order_id'], item.id), data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['name'], 'wrench')
-
-
 
     def test_delete_item(self):
         """ Test deleting an Item """
