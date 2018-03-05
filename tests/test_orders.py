@@ -45,19 +45,19 @@ class TestOrders(unittest.TestCase):
     def test_create_an_order(self):
         """ Create an order and assert that it exists """
         date = datetime.now()
-        order = Order(customer_id=1, date=date, shipped=True)
+        order = Order(customer_id=1, date=date, status = 'processing')
 
         self.assertEqual(order.id, None)
         self.assertEqual(order.customer_id, 1)
         self.assertEqual(order.date, date)
-        self.assertEqual(order.shipped, True)
+        self.assertEqual(order.status, 'processing')
 
     def test_add_an_order(self):
         """ Create an Order and add it to the database """
         date = datetime.now()
         orders = Order.all()
         self.assertEqual(orders, [])
-        order = Order(customer_id=1, date=date, shipped=True)
+        order = Order(customer_id=1, date=date, status ='processing')
         self.assertEqual(order.id, None)
         order.save()
 
@@ -68,7 +68,7 @@ class TestOrders(unittest.TestCase):
     def test_update_an_order(self):
         """ Update an Order """
         date = datetime.now()
-        order = Order(customer_id=1, date=date, shipped=True)
+        order = Order(customer_id=1, date=date, status = 'processing')
         order.save()
         self.assertEqual(order.id, 1)
 
@@ -77,12 +77,12 @@ class TestOrders(unittest.TestCase):
 
         orders = Order.all()
         self.assertEqual(len(orders), 1)
-        self.assertEqual(orders[0].shipped, False)
+        self.assertEqual(orders[0].status, 'processing')
 
     def test_delete_an_order(self):
         """ Delete an Order """
         date = datetime.now()
-        order = Order(customer_id=1, date=date, shipped=True)
+        order = Order(customer_id=1, date=date, status = 'processing')
         order.save()
         self.assertEqual(len(Order.all()), 1)
 
@@ -92,7 +92,7 @@ class TestOrders(unittest.TestCase):
     def test_serialize_an_order(self):
         """ Test serialization of an Order """
         date = datetime.now()
-        order = Order(customer_id=1, date=date, shipped=True)
+        order = Order(customer_id=1, date=date, status = 'processing')
         data = order.serialize()
 
         self.assertNotEqual(data, None)
@@ -103,13 +103,13 @@ class TestOrders(unittest.TestCase):
         self.assertEqual(data['customer_id'], 1)
         self.assertIn('date', data)
         self.assertEqual(data['date'], date)
-        self.assertIn('shipped', data)
-        self.assertEqual(data['shipped'], True)
+        self.assertIn('status', data)
+        self.assertEqual(data['status'], 'processing')
 
     def test_deserialize_an_order(self):
         """ Test deserialization of an Order """
         date = str(datetime.now())
-        data = {"id": 1, "customer_id": 1, "date": date, "shipped": 1}
+        data = {"id": 1, "customer_id": 1, "date": date, "status": 'processing'}
         order = Order()
         order.deserialize(data)
 
@@ -117,14 +117,14 @@ class TestOrders(unittest.TestCase):
         self.assertEqual(order.id, None)
         self.assertEqual(order.customer_id, 1)
         self.assertEqual(str(order.date), date)
-        self.assertEqual(order.shipped, True)
+        self.assertEqual(order.status, 'processing')
 
     def test_fetch_all_orders(self):
         """ Test fetching all Orders """
         date = datetime.now()
-        order = Order(customer_id=1, date=date, shipped=True)
+        order = Order(customer_id=1, date=date, status='processing')
         order.save()
-        order2 = Order(customer_id=2, date=date, shipped=False)
+        order2 = Order(customer_id=2, date=date, status = 'processing')
         order2.save()
         Order.all()
 
@@ -133,7 +133,7 @@ class TestOrders(unittest.TestCase):
     def test_get_an_order(self):
         """ Get an Order by id """
         date = datetime.now()
-        order = Order(customer_id=1, date=date, shipped=True)
+        order = Order(customer_id=1, date=date, status = 'processing')
         order.save()
 
         order1 = Order.get(order.id)
@@ -148,7 +148,7 @@ class TestOrders(unittest.TestCase):
     def test_find_by_customer_id(self):
         """ Find orders by customer_id """
         date = datetime.now()
-        order = Order(customer_id=1, date=date, shipped=True)
+        order = Order(customer_id=1, date=date, status = 'processing')
         order.save()
         order1 = Order.find_by_customer_id(order.customer_id)
         self.assertEqual(order1[0].customer_id, order.customer_id)
@@ -157,25 +157,25 @@ class TestOrders(unittest.TestCase):
     def test_find_by_date(self):
         """ Find orders by date """
         date = datetime.now()
-        order = Order(customer_id=1, date=date, shipped=True)
+        order = Order(customer_id=1, date=date, status = 'processing')
         order.save()
-        order1 = Order(customer_id=2, date=date, shipped=False)
+        order1 = Order(customer_id=2, date=date,status = 'processing')
         order1.save()
         order2 = Order.find_by_date(date)
         self.assertEqual(order2[0].customer_id, order.customer_id)
-        self.assertEqual(order2[0].shipped, order.shipped)
+        self.assertEqual(order2[0].status, order.status)
         self.assertEqual(order2[0].date, order.date)
 
-    def test_find_by_shipped(self):
-        """ Find orders by shipped """
+    def test_find_by_status(self):
+        """ Find orders by status """
         date = datetime.now()
-        order = Order(customer_id=1, date=date, shipped=True)
+        order = Order(customer_id=1, date=date, status = 'processing')
         order.save()
-        order1 = Order(customer_id=2, date=date, shipped=False)
+        order1 = Order(customer_id=2, date=date, status = 'processing')
         order1.save()
-        order2 = Order.find_by_shipped(True)
+        order2 = Order.find_by_status('processing')
         self.assertEqual(order2[0].customer_id, order.customer_id)
-        self.assertEqual(order2[0].shipped, order.shipped)
+        self.assertEqual(order2[0].status, order.status)
         self.assertEqual(order2[0].date, order.date)
 
     def test_non_dict_raises_error(self):
@@ -189,7 +189,7 @@ class TestOrders(unittest.TestCase):
     def test_invalid_key_raises_error(self):
         """ Try to pass invalid key """
         date = datetime.now()
-        data = {"id": 1, "date": date, "shipped": 1}
+        data = {"id": 1, "date": date, "status": 'processing'}
 
         with self.assertRaises(DataValidationError):
             order = Order()
@@ -198,12 +198,10 @@ class TestOrders(unittest.TestCase):
     def test_repr(self):
         """ Test that string representation is correct """
         date = datetime.now()
-        order = Order(customer_id=1, date=date, shipped=True)
+        order = Order(customer_id=1, date=date, status = 'processing')
         order.save()
 
         self.assertEqual(order.__repr__(), "<Order>")
-          
-        
 
 ######################################################################
 #   M A I N
