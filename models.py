@@ -182,8 +182,7 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     customer_id = db.Column(db.Integer, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
-    status = db.Column(db.String(80),nullable = False)   #----------------------------------------replace
-
+    status = db.Column(db.String(80),nullable = False)  
 
     def __repr__(self):
         return '<Order>'
@@ -199,11 +198,7 @@ class Order(db.Model):
         if self.id:
             db.session.delete(self)
         db.session.commit()
-
-
-
-            
-
+        
     def serialize(self):
         """
         Serializes an Order into a dictionary
@@ -215,7 +210,7 @@ class Order(db.Model):
                 "id": self.id,
                 "customer_id": self.customer_id,
                 "date": self.date,
-                "status":self.status                    #----------------------------------------replace
+                "status":self.status                   
                 }
 
     def deserialize(self, data):
@@ -234,7 +229,7 @@ class Order(db.Model):
         try:
             self.customer_id = data['customer_id']
             self.date = datetime.strptime(data['date'], "%Y-%m-%d %H:%M:%S.%f")
-            self.status = data['status']                    #----------------------------------------change
+            self.status = data['status']                   
 
         except KeyError as error:
             raise DataValidationError('Invalid order: missing ' + error.args[0])
