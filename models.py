@@ -22,7 +22,7 @@ class Item(db.Model):
     name = db.Column(db.String, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
-
+ 
     def __repr__(self):
         return '<Item %r>' % (self.name)
 
@@ -51,7 +51,7 @@ class Item(db.Model):
                 "product_id": self.product_id,
                 "name": self.name,
                 "quantity": self.quantity,
-                "price": self.price
+                "price": self.price,
                 }
 
     def deserialize(self, data, order_id):
@@ -73,6 +73,7 @@ class Item(db.Model):
             self.name = data['name']
             self.quantity = data['quantity']
             self.price = data['price']
+         
         except KeyError as error:
             raise DataValidationError('Invalid item: missing ' + error.args[0])
         except TypeError as error:
@@ -181,7 +182,8 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     customer_id = db.Column(db.Integer, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
-    shipped = db.Column(db.Boolean, nullable=False)
+    status = db.Column(db.String(80),nullable = False)   #----------------------------------------replace
+
 
     def __repr__(self):
         return '<Order>'
@@ -198,6 +200,10 @@ class Order(db.Model):
             db.session.delete(self)
         db.session.commit()
 
+
+
+            
+
     def serialize(self):
         """
         Serializes an Order into a dictionary
@@ -209,7 +215,7 @@ class Order(db.Model):
                 "id": self.id,
                 "customer_id": self.customer_id,
                 "date": self.date,
-                "shipped": self.shipped
+                "status":self.status                    #----------------------------------------replace
                 }
 
     def deserialize(self, data):
@@ -228,7 +234,8 @@ class Order(db.Model):
         try:
             self.customer_id = data['customer_id']
             self.date = datetime.strptime(data['date'], "%Y-%m-%d %H:%M:%S.%f")
-            self.shipped = data['shipped']
+            self.status = data['status']                    #----------------------------------------change
+
         except KeyError as error:
             raise DataValidationError('Invalid order: missing ' + error.args[0])
         except TypeError as error:
@@ -298,12 +305,12 @@ class Order(db.Model):
         return Order.query.filter(Order.date == date)
 
     @staticmethod
-    def find_by_shipped(shipped=True):
+    def find_by_status(status = 'Processing'):
         """ Query that finds Orders by their shipping status """
         """ Returns all Orders by their shipping status
 
         Args:
-            shipped (boolean): True for orders that are shipped
+            status
         """
-        Order.logger.info('Processing available query for %s ...', shipped)
-        return Order.query.filter(Order.shipped == shipped)
+        Order.logger.info('Processing available query for %s ...', status)
+        return Order.query.filter(Order.status == 'processing')
