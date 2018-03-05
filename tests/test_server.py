@@ -174,6 +174,7 @@ class TestServer(unittest.TestCase):
         self.assertIn(new_json_items, data)
 
     def test_create_wrong_content_type(self):
+        """ Creating wrong content type """
         order_count = self.get_order_count()
         item_count = self.get_item_count()
         new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'status': 'processing'}
@@ -183,6 +184,7 @@ class TestServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
     def test_create_item_with_no_name(self):
+        """ Create item with no name """        
         order_count = self.get_order_count()
         item_count = self.get_item_count()
         new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'status': 'processing'}
@@ -203,7 +205,7 @@ class TestServer(unittest.TestCase):
         self.assertEqual(new_json['status'], 'processing')
 
     def test_cancel_order(self):
-        """cancel an existing Order """
+        """ Cancel an existing Order """
         resp = self.app.put('/orders/1/cancel', content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_200_OK)
         #resp = self.app.put('/pets/1/purchase', content_type='application/json')
@@ -212,7 +214,7 @@ class TestServer(unittest.TestCase):
         self.assertEqual(new_json['status'], 'cancel')
 
     def test_delete_order(self):
-        """ Test deleting an Order """
+        """ Deleting an Order """
         order = Order.find_by_customer_id(1)[0]
         # Save the current number of orders for assertion
         order_count = self.get_order_count()
@@ -234,7 +236,7 @@ class TestServer(unittest.TestCase):
         self.assertEqual(new_json['name'], 'wrench')
 
     def test_delete_item(self):
-        """ Test deleting an Item """
+        """ Deleting an Item """
         item = Item()
         # Using one of the existing test Items from setup
         item.id = 2
