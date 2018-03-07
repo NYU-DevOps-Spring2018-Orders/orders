@@ -196,13 +196,13 @@ class TestServer(unittest.TestCase):
     def test_update_order(self):
         """ Update an existing Order """
         order = Order.find_by_customer_id(1)[0]
-        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'status': 'processing'}
+        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'status': 'shipped'}
         new_order['items'] = [{"order_id": 3, "product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
         data = json.dumps(new_order)
         resp = self.app.put('/orders/{}'.format(order.id), data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
-        self.assertEqual(new_json['status'], 'processing')
+        self.assertEqual(new_json['status'], 'shipped')
 
     def test_cancel_order(self):
         """ Cancel an existing Order """
