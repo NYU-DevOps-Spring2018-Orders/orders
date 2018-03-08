@@ -194,8 +194,12 @@ class Order(db.Model):
         db.session.commit()
 
     def delete(self):
-        """ Deletes an Order from the database """
+        """ Deletes an Order and its items from the Database """
+
         if self.id:
+            items = Item.find_by_order_id(self.id)
+            for item in items:
+                item.delete()
             db.session.delete(self)
         db.session.commit()
         
@@ -300,12 +304,12 @@ class Order(db.Model):
         return Order.query.filter(Order.date == date)
 
     @staticmethod
-    def find_by_status(status = 'Processing'):
+    def find_by_status(order_status):
         """ Query that finds Orders by their shipping status """
         """ Returns all Orders by their shipping status
 
         Args:
-            status
+            status (string): 'processing', 'cancelled', 'shipped'
         """
-        Order.logger.info('Processing available query for %s ...', status)
-        return Order.query.filter(Order.status == 'processing')
+        Order.logger.info('Processing available query for %s ...', order_status)
+        return Order.query.filter(Order.status == order_status)
