@@ -194,8 +194,12 @@ class Order(db.Model):
         db.session.commit()
 
     def delete(self):
-        """ Deletes an Order from the database """
+        """ Deletes an Order and its items from the Database """
+
         if self.id:
+            items = Item.find_by_order_id(self.id)
+            for item in items:
+                item.delete()
             db.session.delete(self)
         db.session.commit()
         
