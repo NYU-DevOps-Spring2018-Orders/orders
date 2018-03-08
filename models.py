@@ -304,12 +304,12 @@ class Order(db.Model):
         return Order.query.filter(Order.date == date)
 
     @staticmethod
-    def find_by_status(status = 'Processing'):
+    def find_by_status(order_status):
         """ Query that finds Orders by their shipping status """
         """ Returns all Orders by their shipping status
 
         Args:
-            status
+            status (string): 'processing', 'cancelled', 'shipped'
         """
-        Order.logger.info('Processing available query for %s ...', status)
-        return Order.query.filter(Order.status == 'processing')
+        Order.logger.info('Processing available query for %s ...', order_status)
+        return Order.query.filter(Order.status == order_status)

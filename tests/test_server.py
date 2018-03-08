@@ -28,6 +28,7 @@ HTTP_404_NOT_FOUND = 404
 HTTP_405_METHOD_NOT_ALLOWED = 405
 HTTP_409_CONFLICT = 409
 HTTP_415_UNSUPPORTED_MEDIA_TYPE = 415
+HTTP_500_INTERNAL_SERVER_ERROR = 500
 
 ######################################################################
 #  T E S T   C A S E S
@@ -85,6 +86,69 @@ class TestServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data)
         self.assertEqual(len(data), 2)
+
+    def test_list_orders_by_status(self):
+        """ Get list of orders by status """
+        resp = self.app.get('/orders/query?status=processing')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 2)
+
+    def test_list_orders_by_customer_id(self):
+        """ Get list of orders by customer id """
+        resp = self.app.get('/orders/query?customer_id=1')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 1)
+
+    def test_list_orders_by_no_field(self):
+        """ Get all orders if no field is specified """
+        resp = self.app.get('/orders/query')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 2)
+
+    def test_list_items_by_order_id(self):
+        """ Get list of items by order id """
+        resp = self.app.get('/items/query?order_id=1')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 2)
+
+    def test_list_items_by_prodcut_id(self):
+        """ Get list of items by product id """
+        resp = self.app.get('/items/query?product_id=1')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 1)
+
+    def test_list_items_by_quantity(self):
+        """ Get list of items by quantity """
+        resp = self.app.get('/items/query?quantity=2')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 2)
+
+    def test_list_items_by_price(self):
+        """ Get list of items by price """
+        resp = self.app.get('/items/query?price=10.50')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 1)
+
+    def test_list_items_by_name(self):
+        """ Get list of items by name """
+        resp = self.app.get('/items/query?name=beer')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 1)
+
+    def test_list_items_by_no_field(self):
+        """ Get all items if no field is specified """
+        resp = self.app.get('/items/query')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 3)
 
     def test_get_order_item_list(self):
         """ Get a list of Items from an Order """
@@ -208,11 +272,9 @@ class TestServer(unittest.TestCase):
         """ Cancel an existing Order """
         resp = self.app.put('/orders/1/cancel', content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_200_OK)
-        #resp = self.app.put('/pets/1/purchase', content_type='application/json')
-        #self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
         new_json = json.loads(resp.data)
-        self.assertEqual(new_json['status'], 'cancel')
-
+        self.assertEqual(new_json['status'], 'cancelled')
+    
     def test_delete_order(self):
         """ Deleting an Order """
         order = Order.find_by_customer_id(1)[0]

@@ -178,6 +178,64 @@ def list_orders():
 
 
 ######################################################################
+# LIST ITEMS BY FIELD
+######################################################################
+@app.route('/items/query', methods=['GET'])
+def list_items_by_field():
+    """ Returns all of the Orders """
+
+    items = []
+
+    order_id = request.args.get('order_id')
+    product_id = request.args.get('product_id')
+    quantity = request.args.get('quantity')
+    price = request.args.get('price')
+    name = request.args.get('name')
+
+    if order_id:
+        items = Item.find_by_order_id(order_id)
+    elif product_id:
+        items = Item.find_by_product_id(product_id)
+    elif quantity:
+        items = Item.find_by_quantity(quantity)
+    elif price:
+        items = Item.find_by_price(price)
+    elif name:
+        items = Item.find_by_name(name)
+    else:
+        items = Item.all()
+
+    results = [item.serialize() for item in items]
+    return make_response(jsonify(results), status.HTTP_200_OK)
+
+
+######################################################################
+# LIST ORDERS BY FIELD
+######################################################################
+@app.route('/orders/query', methods=['GET'])
+def list_orders_by_field():
+    """ Returns all of the Orders """
+
+    orders = []
+    customer_id = request.args.get('customer_id')
+    order_status = request.args.get('status')
+    date = request.args.get('date')
+
+    if customer_id:
+        orders = Order.find_by_customer_id(customer_id)
+    elif order_status:
+        orders = Order.find_by_status(order_status)
+    elif date:
+        orders = Order.find_by_date(date)        
+    else:
+        orders = Order.all()
+
+    results = [order.serialize() for order in orders]
+    return make_response(jsonify(results), status.HTTP_200_OK)
+
+
+
+######################################################################
 # LIST ALL ITEMS FROM AN ORDER
 ######################################################################
 @app.route('/orders/<int:order_id>/items', methods=['GET'])
@@ -198,7 +256,7 @@ def delete_order(order_id):
     Delete an Order
 
     This endpoint will delete an Order based on the id specified in
-    the path
+    the path.  It will also delete the items associated with the order
     """
     order = Order.get(order_id)
     if order:
@@ -273,13 +331,10 @@ def cancel_orders(order_id):
 
     This endpoint will update an Order based the body that is posted
     """
-    #check_content_type('application/json')
     order = Order.get(order_id)
     if not order:
         abort(HTTP_404_NOT_FOUND, "Order with id '{}' was not found.".format(order_id))
-    #if not order:
-    #    raise NotFound("Order with id '{}' was not found.".format(order_id))
-    order.status = 'cancel'  
+    order.status = 'cancelled'  
     order.save()
     return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
 
