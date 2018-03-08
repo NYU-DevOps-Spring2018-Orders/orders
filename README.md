@@ -9,19 +9,24 @@ Our team handled the order process of a retail website.  Functions are built to 
 
 ## Structure
 
--   Two classes have been set up - Order and Item.  An Item object represents an item from an associated order.  
+-   Two classes Order and Item.  An Item object represents an item from an associated order. 
+    - Order: id (auto generated), customer_id, status, date
+    - Item: id (auto generated), product_id, order_id, name, quantity, price
+-   Status has 3 states - processing (initial state), cancelled, shipped
+-   Two tables - Orders and Items
+    - Order table does not include any detail of the items in the order.  ID auto generated
+    - Item table has a unique ID that is auto generated as well.  Each Item has a Product ID and Order ID (foreign key) associated with it.
 -   Two paths
     - "http://localhost:5000/orders"
     - "http://localhost:5000/items"
 -   Main REST API Functions
-    - CREATE:  Creates an order by generating an Order object and Item objects for each item which is a part of the order
+    - CREATE:  Creates an order by generating an Order object and Item objects for each item which is a part of the orders
     - GET:  Get an order or get an item
     - UPDATE:  Updates an order based on the differences sent in the JSON
     - LIST:  List items from an order, list all orders or list all items
     - QUERY:  Find orders and items based on the fields in their respective tables
     - ACTION:  Cancels an order by changing the status of the order
     - DELETE:  Delete an order or delete an item from an order
-        
 
 ## Prerequisites
 
@@ -47,6 +52,39 @@ Then run the following command while running the VM...
     python server.py
 
 Service will be listening on port 5000: http://localhost:5000/
+
+Note there is a test json with the expected fields for the service...
+
+    orders/tests/test.json
+
+## REST API Functions
+
+-  CREATE - takes the JSON and creates the order and item details for their respective tables 
+   - `POST http://localhost:5000/orders` 
+-  GET - Gets the details of a specific order 
+   - `GET http://localhost:5000/orders/{id}`  
+-  GET - Get details of a specific item: 
+   - `GET http://localhost:5000/orders/{id}`
+-  LIST - All orders in the system: 
+   - `GET http://localhost:5000/orders`
+-  LIST - All items in the system: 
+   - `GET http://localhost:5000/items`
+-  LIST - Items from a specified order: 
+   - `GET http://localhost:5000/orders/{id}/items`
+-  DELETE - deletes an order and its items: 
+   - `DELETE http://localhost:5000/orders/{id}`
+-  DELETE - deletes an item: 
+   - `DELETE http://localhost:5000/items/{id}`
+-  ACTION - cancel an order:
+   - `PUT http://localhost:5000/orders/{id}/cancel`
+-  PUT - update an order:
+   - `PUT http://localhost:5000/orders/{id}`
+-  PUT - update an item:
+   - `PUT http://localhost:5000/item/{id}`
+-  QUERY - query for a list of orders based on field:
+   - `PUT http://localhost:5000/orders/query?<field>=<value>`
+-  QUERY - query for a list of items based on field:
+   - `PUT http://localhost:5000/items/query?<field>=<value>`
 
 
 ## Testing
