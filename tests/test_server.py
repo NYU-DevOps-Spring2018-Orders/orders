@@ -268,13 +268,6 @@ class TestServer(unittest.TestCase):
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['status'], 'shipped')
 
-    def test_cancel_order(self):
-        """ Cancel an existing Order """
-        resp = self.app.put('/orders/1/cancel', content_type='application/json')
-        self.assertEqual(resp.status_code, HTTP_200_OK)
-        new_json = json.loads(resp.data)
-        self.assertEqual(new_json['status'], 'cancelled')
-    
     def test_delete_order(self):
         """ Deleting an Order """
         order = Order.find_by_customer_id(1)[0]
@@ -298,19 +291,29 @@ class TestServer(unittest.TestCase):
         self.assertEqual(new_json['name'], 'wrench')
 
     def test_delete_item(self):
-        """ Deleting an Item """
-        item = Item()
-        # Using one of the existing test Items from setup
-        item.id = 2
+        """ Deleting an Item from an Order"""
+        item = Item.find_by_name('toilet paper')[0]
+        
         # Save the current number of items for assertion
         item_count = self.get_item_count()
-        resp = self.app.delete('/items/{}'.format(item.id),
+        resp = self.app.delete('/orders/{}/items/{}'.format(item.order_id, item.id),
                                content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(resp.data), 0)
         new_count = self.get_item_count()
         self.assertEqual(new_count, item_count - 1)
 
+        resp = self.app.delete('/orders/{}/items/{}'.format(5, item.id),
+                               content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def test_cancel_order(self):
+        """ Cancel an existing Order """
+        resp = self.app.put('/orders/1/cancel', content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        new_json = json.loads(resp.data)
+        self.assertEqual(new_json['status'], 'cancelled')
+    
     def test_method_not_allowed(self):
         """ Call a Method thats not Allowed """
         resp = self.app.post('/orders/0')
