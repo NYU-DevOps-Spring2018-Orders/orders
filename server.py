@@ -275,7 +275,8 @@ def delete_item(order_id, item_id):
     the path
     """
     item = Item.get(item_id)
-    check_order_id = item.order_id
+    item_dict = item.serialize()
+    check_order_id = item_dict['order_id']
     
     if order_id != check_order_id:
         raise NotFound("Item id '{}' has order id '{}' not '{}'.".format(item_id, check_order_id, order_id))
@@ -350,6 +351,7 @@ def cancel_orders(order_id):
 def init_db():
     """ Initialies the SQLAlchemy app """
     global app
+    # Item.init_db(app)
     Order.init_db(app)
 
 def check_content_type(content_type):
@@ -364,6 +366,7 @@ def initialize_logging(log_level=logging.INFO):
     if not app.debug:
         print 'Setting up logging...'
         # Set up default logging for submodules to use STDOUT
+        # datefmt='%m/%d/%Y %I:%M:%S %p'
         fmt = '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
         logging.basicConfig(stream=sys.stdout, level=log_level, format=fmt)
         # Make a new log handler that uses STDOUT

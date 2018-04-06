@@ -291,7 +291,7 @@ class TestServer(unittest.TestCase):
         self.assertEqual(new_json['name'], 'wrench')
 
     def test_delete_item(self):
-        """ Deleting an Item from an Order"""
+        """ Deleting an Item """
         item = Item.find_by_name('toilet paper')[0]
         
         # Save the current number of items for assertion
@@ -302,10 +302,6 @@ class TestServer(unittest.TestCase):
         self.assertEqual(len(resp.data), 0)
         new_count = self.get_item_count()
         self.assertEqual(new_count, item_count - 1)
-
-        resp = self.app.delete('/orders/{}/items/{}'.format(5, item.id),
-                               content_type='application/json')
-        self.assertEqual(resp.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def test_cancel_order(self):
         """ Cancel an existing Order """
