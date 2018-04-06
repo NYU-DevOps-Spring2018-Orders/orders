@@ -275,8 +275,7 @@ def delete_item(order_id, item_id):
     the path
     """
     item = Item.get(item_id)
-    item_dict = item.serialize()
-    check_order_id = item_dict['order_id']
+    check_order_id = item.order_id
     
     if order_id != check_order_id:
         raise NotFound("Item id '{}' has order id '{}' not '{}'.".format(item_id, check_order_id, order_id))

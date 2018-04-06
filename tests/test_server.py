@@ -291,7 +291,7 @@ class TestServer(unittest.TestCase):
         self.assertEqual(new_json['name'], 'wrench')
 
     def test_delete_item(self):
-        """ Deleting an Item """
+        """ Deleting an Item from an Order"""
         item = Item.find_by_name('toilet paper')[0]
         
         # Save the current number of items for assertion
