@@ -267,17 +267,26 @@ def delete_order(order_id):
 ######################################################################
 # DELETE AN ITEM FROM AN ORDER
 ######################################################################
-@app.route('/items/<int:item_id>', methods=['DELETE'])
-def delete_item(item_id):
+@app.route('/orders/<int:order_id>/items/<int:item_id>', methods=['DELETE'])
+def delete_item(order_id, item_id):
     """
     Delete an Item
-
     This endpoint will delete an Item based on the id specified in
     the path
     """
     item = Item.get(item_id)
+    
+    if item is None:
+        raise NotFound("Order id '{}' has no item with id '{}'.".format(order_id, item_id))
+
+    check_order_id = item.order_id
+
+    if order_id != check_order_id:
+        raise NotFound("Order id '{}' does not have item with id '{}'.".format(order_id, item_id))
+
     if item:
         item.delete()
+
     return make_response('', status.HTTP_204_NO_CONTENT)
     
 
