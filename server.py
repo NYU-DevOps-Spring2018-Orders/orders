@@ -234,7 +234,6 @@ def list_orders_by_field():
     return make_response(jsonify(results), status.HTTP_200_OK)
 
 
-
 ######################################################################
 # LIST ALL ITEMS FROM AN ORDER
 ######################################################################
@@ -267,8 +266,8 @@ def delete_order(order_id):
 ######################################################################
 # DELETE AN ITEM FROM AN ORDER
 ######################################################################
-@app.route('/items/<int:item_id>', methods=['DELETE'])
-def delete_item(item_id):
+@app.route('/orders/<int:order_id>/items/<int:item_id>', methods=['DELETE'])
+def delete_item(order_id, item_id):
     """
     Delete an Item
 
@@ -276,8 +275,14 @@ def delete_item(item_id):
     the path
     """
     item = Item.get(item_id)
+    check_order_id = item.order_id
+    
+    if order_id != check_order_id:
+        raise NotFound("Item id '{}' has order id '{}' not '{}'.".format(item_id, check_order_id, order_id))
+
     if item:
         item.delete()
+
     return make_response('', status.HTTP_204_NO_CONTENT)
     
 
@@ -342,7 +347,6 @@ def cancel_orders(order_id):
 ######################################################################
 # UTILITY FUNCTIONS
 ######################################################################
-
 def init_db():
     """ Initialies the SQLAlchemy app """
     global app
