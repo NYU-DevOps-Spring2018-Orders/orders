@@ -33,17 +33,27 @@ Vagrant.configure(2) do |config|
     # so that nosetests runs without extra arguments.
     config.vm.synced_folder ".", "/vagrant", mount_options: ["dmode=775,fmode=664"]
 
-    # Enable provisioning with a shell script. Additional provisioners such as
-    # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
-    # documentation for more information about their specific syntax and use.
+    # Provisioning for Python and Bluemix
     config.vm.provision "shell", inline: <<-SHELL
       apt-get update
       apt-get install -y git python-pip python-dev build-essential
       pip install --upgrade pip
       apt-get -y autoremove
+
+      echo "\n******************************"
+      echo " Installing Bluemix CLI"
+      echo "******************************\n"
+      wget -q -O - https://clis.ng.bluemix.net/download/bluemix-cli/latest/linux64 | tar xzv
+      cd Bluemix_CLI/
+      ./install_bluemix_cli
+      cd ..
+      rm -fr Bluemix_CLI/
+      bluemix config --usage-stats-collect false
+
       # Make vi look nice
       sudo -H -u ubuntu echo "colorscheme desert" > ~/.vimrc
       # Install app dependencies
+
       cd /vagrant
       sudo pip install -r requirements.txt
     SHELL
@@ -55,7 +65,6 @@ Vagrant.configure(2) do |config|
       sudo chown vagrant:vagrant /var/lib/postgresql/data
     SHELL
 
-    # Add PostgreSQL docker container
     config.vm.provision "docker" do |d|
       d.pull_images "postgres"
       d.run "postgres",
