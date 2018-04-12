@@ -36,7 +36,7 @@ Vagrant.configure(2) do |config|
     # Provisioning for Python and Bluemix
     config.vm.provision "shell", inline: <<-SHELL
       apt-get update
-      apt-get install -y git python-pip python-dev build-essential
+      apt-get install -y git python-pip libpq-dev python-dev build-essential
       pip install --upgrade pip
       apt-get -y autoremove
 
