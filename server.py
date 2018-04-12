@@ -159,31 +159,6 @@ def get_item(item_id):
 @app.route('/items', methods=['GET'])
 def list_items():
     """ Returns all of the Items """
-    items = Item.all()
-
-    results = [item.serialize() for item in items]
-    return make_response(jsonify(results), status.HTTP_200_OK)
-
-
-######################################################################
-# LIST ALL ORDERS
-######################################################################
-@app.route('/orders', methods=['GET'])
-def list_orders():
-    """ Returns all of the Orders """
-    orders = Order.all()
-
-    results = [order.serialize() for order in orders]
-    return make_response(jsonify(results), status.HTTP_200_OK)
-
-
-######################################################################
-# LIST ITEMS BY FIELD
-######################################################################
-@app.route('/items/query', methods=['GET'])
-def list_items_by_field():
-    """ Returns all of the Orders """
-
     items = []
 
     order_id = request.args.get('order_id')
@@ -210,12 +185,11 @@ def list_items_by_field():
 
 
 ######################################################################
-# LIST ORDERS BY FIELD
+# LIST ALL ORDERS
 ######################################################################
-@app.route('/orders/query', methods=['GET'])
-def list_orders_by_field():
+@app.route('/orders', methods=['GET'])
+def list_orders():
     """ Returns all of the Orders """
-
     orders = []
     customer_id = request.args.get('customer_id')
     order_status = request.args.get('status')
@@ -232,7 +206,6 @@ def list_orders_by_field():
 
     results = [order.serialize() for order in orders]
     return make_response(jsonify(results), status.HTTP_200_OK)
-
 
 
 ######################################################################

@@ -82,9 +82,9 @@ Note there is a test json with the expected fields for the service...
 -  PUT - update an item:
    - `PUT http://localhost:5000/item/{id}`
 -  QUERY - query for a list of orders based on field:
-   - `PUT http://localhost:5000/orders/query?<field>=<value>`
+   - `GET http://localhost:5000/orders?<field>=<value>`
 -  QUERY - query for a list of items based on field:
-   - `PUT http://localhost:5000/items/query?<field>=<value>`
+   - `GET http://localhost:5000/items?<field>=<value>`
 
 
 ## Testing

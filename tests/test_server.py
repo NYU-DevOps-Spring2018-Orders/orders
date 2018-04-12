@@ -89,66 +89,52 @@ class TestServer(unittest.TestCase):
 
     def test_list_orders_by_status(self):
         """ Get list of orders by status """
-        resp = self.app.get('/orders/query?status=processing')
+        resp = self.app.get('/orders?status=processing')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data)
         self.assertEqual(len(data), 2)
 
     def test_list_orders_by_customer_id(self):
         """ Get list of orders by customer id """
-        resp = self.app.get('/orders/query?customer_id=1')
+        resp = self.app.get('/orders?customer_id=1')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data)
         self.assertEqual(len(data), 1)
 
-    def test_list_orders_by_no_field(self):
-        """ Get all orders if no field is specified """
-        resp = self.app.get('/orders/query')
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        data = json.loads(resp.data)
-        self.assertEqual(len(data), 2)
-
     def test_list_items_by_order_id(self):
         """ Get list of items by order id """
-        resp = self.app.get('/items/query?order_id=1')
+        resp = self.app.get('/items?order_id=1')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data)
         self.assertEqual(len(data), 2)
 
     def test_list_items_by_prodcut_id(self):
         """ Get list of items by product id """
-        resp = self.app.get('/items/query?product_id=1')
+        resp = self.app.get('/items?product_id=1')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data)
         self.assertEqual(len(data), 1)
 
     def test_list_items_by_quantity(self):
         """ Get list of items by quantity """
-        resp = self.app.get('/items/query?quantity=2')
+        resp = self.app.get('/items?quantity=2')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data)
         self.assertEqual(len(data), 2)
 
     def test_list_items_by_price(self):
         """ Get list of items by price """
-        resp = self.app.get('/items/query?price=10.50')
+        resp = self.app.get('/items?price=10.50')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data)
         self.assertEqual(len(data), 1)
 
     def test_list_items_by_name(self):
         """ Get list of items by name """
-        resp = self.app.get('/items/query?name=beer')
+        resp = self.app.get('/items?name=beer')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data)
         self.assertEqual(len(data), 1)
-
-    def test_list_items_by_no_field(self):
-        """ Get all items if no field is specified """
-        resp = self.app.get('/items/query')
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        data = json.loads(resp.data)
-        self.assertEqual(len(data), 3)
 
     def test_get_order_item_list(self):
         """ Get a list of Items from an Order """
