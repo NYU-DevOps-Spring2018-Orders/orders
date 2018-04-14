@@ -73,8 +73,8 @@ Note there is a test json with the expected fields for the service...
    - `GET http://localhost:5000/orders/{id}/items`
 -  DELETE - deletes an order and its items: 
    - `DELETE http://localhost:5000/orders/{id}`
--  DELETE - deletes an item: 
-   - `DELETE http://localhost:5000/items/{id}`
+-  DELETE - deletes an item from an order: 
+   - `DELETE http://localhost:5000/orders/{id}/items/{id}`
 -  ACTION - cancel an order:
    - `PUT http://localhost:5000/orders/{id}/cancel`
 -  PUT - update an order:
