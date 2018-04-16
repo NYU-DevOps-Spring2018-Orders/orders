@@ -246,7 +246,6 @@ class Order(db.Model):
     def init_db(app):
         """ Initializes the database session """
         Order.logger.info('Initializing database')
-        Order.logger.info('With URL {}').format(app.config['SQLALCHEMY_DATABASE_URI'])
         Order.app = app
         # This is where we initialize SQLAlchemy from the Flask app
         db.init_app(app)
