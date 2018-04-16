@@ -22,7 +22,7 @@ def get_database_uri():
     else:
         uri = 'sqlite:///db/development.db'
 
-    logging.info("Conecting to database on host %s port %s", hostname, port)
+    logging.info("Conecting to database on %s", uri)
     # connect_string = 'mysql+pymysql://{}:{}@{}:{}/{}'
     # return connect_string.format(username, password, hostname, port, name)
     connect_string = uri
