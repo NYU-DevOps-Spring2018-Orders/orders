@@ -8,11 +8,12 @@ from werkzeug.exceptions import NotFound
 from flask_sqlalchemy import SQLAlchemy
 
 from models import Order, Item, DataValidationError
+from vcap import get_database_uri
 
 app = Flask(__name__)
 
 # dev config
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/development.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = get_database_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'please, tell nobody... Shhhh'
 app.config['LOGGING_LEVEL'] = logging.INFO
@@ -74,7 +75,7 @@ def index():
     """ Root URL response """
     return jsonify(name='Orders REST API Service',
                    version='1.0',
-                   paths=[url_for('list_orders', _external=True), 
+                   paths=[url_for('list_orders', _external=True),
                           url_for('list_items', _external=True)],
                    status = "success"
                   ), status.HTTP_200_OK
@@ -200,7 +201,7 @@ def list_orders():
     elif order_status:
         orders = Order.find_by_status(order_status)
     elif date:
-        orders = Order.find_by_date(date)        
+        orders = Order.find_by_date(date)
     else:
         orders = Order.all()
 
@@ -219,7 +220,7 @@ def list_items_from_an_order(order_id):
     results = [item.serialize() for item in items]
     return make_response(jsonify(results), status.HTTP_200_OK)
 
-    
+
 ######################################################################
 # DELETE AN ORDER
 ######################################################################
@@ -248,7 +249,7 @@ def delete_item(order_id, item_id):
     the path
     """
     item = Item.get(item_id)
-    
+
     if item is None:
         raise NotFound("Order id '{}' has no item with id '{}'.".format(order_id, item_id))
 
@@ -261,7 +262,7 @@ def delete_item(order_id, item_id):
         item.delete()
 
     return make_response('', status.HTTP_204_NO_CONTENT)
-    
+
 
 ######################################################################
 # UPDATE AN ORDER
@@ -316,7 +317,7 @@ def cancel_orders(order_id):
     order = Order.get(order_id)
     if not order:
         abort(HTTP_404_NOT_FOUND, "Order with id '{}' was not found.".format(order_id))
-    order.status = 'cancelled'  
+    order.status = 'cancelled'
     order.save()
     return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
 
