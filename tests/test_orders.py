@@ -108,7 +108,12 @@ class TestOrders(unittest.TestCase):
 
     def test_deserialize_an_order(self):
         """ Test deserialization of an Order """
-        date = str(datetime.now())
+        # using this format to match format from our html forms
+        date = "2018-04-23T11:11"
+
+        # we return a datetime object with a different format
+        date_resp = "2018-04-23 11:11:00"
+
         data = {"id": 1, "customer_id": 1, "date": date, "status": 'processing'}
         order = Order()
         order.deserialize(data)
@@ -116,7 +121,7 @@ class TestOrders(unittest.TestCase):
         self.assertNotEqual(order, None)
         self.assertEqual(order.id, None)
         self.assertEqual(order.customer_id, 1)
-        self.assertEqual(str(order.date), date)
+        self.assertEqual(str(order.date), date_resp)
         self.assertEqual(order.status, 'processing')
 
     def test_fetch_all_orders(self):

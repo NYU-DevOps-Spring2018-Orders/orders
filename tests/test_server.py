@@ -69,9 +69,7 @@ class TestServer(unittest.TestCase):
     def test_index(self):
         """ Test the Home Page """
         resp = self.app.get('/')
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        data = json.loads(resp.data)
-        self.assertEqual(data['status'], 'success')
+        self.assertIn('Order REST API Service', resp.data)
 
     def test_get_item_list(self):
         """ Get a list of Items """
@@ -183,7 +181,7 @@ class TestServer(unittest.TestCase):
         order_count = self.get_order_count()
         item_count = self.get_item_count()
         # add a new order. order id is 3 since there are 2 orders initially
-        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'status': 'processing'}
+        new_order = {'customer_id': 1, 'date': "2018-04-23T11:11", 'status': 'processing'}
         new_order['items'] = [{"order_id": 3, "product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
         data = json.dumps(new_order)
         resp = self.app.post('/orders', data=data, content_type='application/json')
@@ -227,17 +225,17 @@ class TestServer(unittest.TestCase):
         """ Creating wrong content type """
         order_count = self.get_order_count()
         item_count = self.get_item_count()
-        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'status': 'processing'}
+        new_order = {'customer_id': 1, 'date': "2018-04-23T11:11", 'status': 'processing'}
         new_order['items'] = [{"order_id": 3, "product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
         data = json.dumps(new_order)
         resp =self.app.post('/orders', data=data, content_type="text/plain")
         self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
     def test_create_item_with_no_name(self):
-        """ Create item with no name """        
+        """ Create item with no name """
         order_count = self.get_order_count()
         item_count = self.get_item_count()
-        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'status': 'processing'}
+        new_order = {'customer_id': 1, 'date': "2018-04-23T11:11", 'status': 'processing'}
         new_order['items'] = [{"order_id": 3, "product_id": 3, "quantity": 1, "price": "4.50"}]
         data = json.dumps(new_order)
         resp =self.app.post('/orders', data=data, content_type="application/json")
@@ -246,7 +244,7 @@ class TestServer(unittest.TestCase):
     def test_update_order(self):
         """ Update an existing Order """
         order = Order.find_by_customer_id(1)[0]
-        new_order = {'customer_id': 1, 'date': "2018-03-01 18:55:36.985524", 'status': 'shipped'}
+        new_order = {'customer_id': 1, 'date': "2018-04-23T11:11", 'status': 'shipped'}
         new_order['items'] = [{"order_id": 3, "product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
         data = json.dumps(new_order)
         resp = self.app.put('/orders/{}'.format(order.id), data=data, content_type='application/json')
@@ -260,7 +258,7 @@ class TestServer(unittest.TestCase):
         self.assertEqual(resp.status_code, HTTP_200_OK)
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['status'], 'cancelled')
-    
+
     def test_delete_order(self):
         """ Deleting an Order """
         order = Order.find_by_customer_id(1)[0]
@@ -286,7 +284,7 @@ class TestServer(unittest.TestCase):
     def test_delete_item(self):
         """ Deleting an Item from an Order"""
         item = Item.find_by_name('toilet paper')[0]
-        
+
         # Save the current number of items for assertion
         item_count = self.get_item_count()
         resp = self.app.delete('/orders/{}/items/{}'.format(item.order_id, item.id),

@@ -73,12 +73,7 @@ def internal_server_error(error):
 @app.route('/')
 def index():
     """ Root URL response """
-    return jsonify(name='Orders REST API Service',
-                   version='1.0',
-                   paths=[url_for('list_orders', _external=True),
-                          url_for('list_items', _external=True)],
-                   status = "success"
-                  ), status.HTTP_200_OK
+    return app.send_static_file('index.html')
 
 
 ######################################################################
