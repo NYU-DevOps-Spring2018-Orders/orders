@@ -231,8 +231,8 @@ class Order(db.Model):
             DataValidationError: when bad or missing data
         """
         try:
-            self.customer_id = data['customer_id']
-            self.date = datetime.strptime(data['date'], "%Y-%m-%d %H:%M:%S.%f")
+            self.customer_id = int(data['customer_id'])
+            self.date = datetime.strptime(data['date'], "%Y-%m-%dT%H:%M")
             self.status = data['status']
 
         except KeyError as error:
