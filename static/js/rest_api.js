@@ -6,21 +6,17 @@ $(function () {
 
     // Updates the form with data from the response
     function update_form_data(res) {
-        $("#pet_id").val(res.id);
-        $("#pet_name").val(res.name);
-        $("#pet_category").val(res.category);
-        if (res.available == true) {
-            $("#pet_available").val("true");
-        } else {
-            $("#pet_available").val("false");
-        }
+        $("#order_id").val(res.id);
+        $("#order_customer_id").val(res.customer_id);
+        $("#order_date").val(res.order_date);
+        $("#order_status").val(res.order_status);
     }
 
     /// Clears all form fields
     function clear_form_data() {
-        $("#pet_name").val("");
-        $("#pet_category").val("");
-        $("#pet_available").val("");
+        $("#order_customer_id").val("");
+        $("#order_date").val("");
+        $("#order_status").val("");
     }
 
     // Updates the flash message area
@@ -29,25 +25,33 @@ $(function () {
         $("#flash_message").append(message);
     }
 
+    // add items to orders
+    var items_for_order = [];
+    function add_item(item) {
+      items_for_order = items_for_order.append(item)
+    }
+
     // ****************************************
-    // Create a Pet
+    // Create an Order
     // ****************************************
 
     $("#create-btn").click(function () {
 
-        var name = $("#pet_name").val();
-        var category = $("#pet_category").val();
-        var available = $("#pet_available").val() == "true";
+        var customer_id = $("#order_customer_id").val();
+        var date = $("#order_date").val();
+        var status = $("#order_status").val();
+        var items = items_for_order;
 
         var data = {
-            "name": name,
-            "category": category,
-            "available": available
+            "customer_id": customer_id,
+            "date": date,
+            "status": status,
+            "items": items
         };
 
         var ajax = $.ajax({
             type: "POST",
-            url: "/pets",
+            url: "/orders",
             contentType:"application/json",
             data: JSON.stringify(data),
         });
@@ -64,25 +68,27 @@ $(function () {
 
 
     // ****************************************
-    // Update a Pet
+    // Update an Order
     // ****************************************
 
     $("#update-btn").click(function () {
 
-        var pet_id = $("#pet_id").val();
-        var name = $("#pet_name").val();
-        var category = $("#pet_category").val();
-        var available = $("#pet_available").val() == "true";
+        var order_id = $("#order_id").val();
+        var customer_id = $("#order_customer_id").val();
+        var date = $("#order_date").val();
+        var status = $("#order_status").val();
+        var items = items_for_order;
 
         var data = {
-            "name": name,
-            "category": category,
-            "available": available
+            "customer_id": customer_id,
+            "date": date,
+            "status": status,
+            "items": items
         };
 
         var ajax = $.ajax({
                 type: "PUT",
-                url: "/pets/" + pet_id,
+                url: "/orders/" + order_id,
                 contentType:"application/json",
                 data: JSON.stringify(data)
             })
@@ -99,16 +105,16 @@ $(function () {
     });
 
     // ****************************************
-    // Retrieve a Pet
+    // Retrieve an Order
     // ****************************************
 
     $("#retrieve-btn").click(function () {
 
-        var pet_id = $("#pet_id").val();
+        var order_id = $("#order_id").val();
 
         var ajax = $.ajax({
             type: "GET",
-            url: "/pets/" + pet_id,
+            url: "/orders/" + order_id,
             contentType:"application/json",
             data: ''
         })
@@ -127,23 +133,23 @@ $(function () {
     });
 
     // ****************************************
-    // Delete a Pet
+    // Delete an Order
     // ****************************************
 
     $("#delete-btn").click(function () {
 
-        var pet_id = $("#pet_id").val();
+        var order_id = $("#order_id").val();
 
         var ajax = $.ajax({
             type: "DELETE",
-            url: "/pets/" + pet_id,
+            url: "/orders/" + order_id,
             contentType:"application/json",
             data: '',
         })
 
         ajax.done(function(res){
             clear_form_data()
-            flash_message("Pet with ID [" + res.id + "] has been Deleted!")
+            flash_message("Order with ID [" + res.id + "] has been Deleted!")
         });
 
         ajax.fail(function(res){
@@ -156,64 +162,39 @@ $(function () {
     // ****************************************
 
     $("#clear-btn").click(function () {
-        $("#pet_id").val("");
+        $("#order_id").val("");
         clear_form_data()
     });
 
     // ****************************************
-    // Search for a Pet
+    // View Orders
     // ****************************************
 
-    $("#search-btn").click(function () {
-
-        var name = $("#pet_name").val();
-        var category = $("#pet_category").val();
-        var available = $("#pet_available").val() == "true";
-
-        var queryString = ""
-
-        if (name) {
-            queryString += 'name=' + name
-        }
-        if (category) {
-            if (queryString.length > 0) {
-                queryString += '&category=' + category
-            } else {
-                queryString += 'category=' + category
-            }
-        }
-        if (available) {
-            if (queryString.length > 0) {
-                queryString += '&available=' + available
-            } else {
-                queryString += 'available=' + available
-            }
-        }
+    $("#list-btn").click(function () {
 
         var ajax = $.ajax({
             type: "GET",
-            url: "/pets?" + queryString,
-            contentType:"application/json",
-            data: ''
+            url: "/orders",
+            contentType:"application/json"
         })
 
         ajax.done(function(res){
             //alert(res.toSource())
-            $("#search_results").empty();
-            $("#search_results").append('<table class="table-striped">');
+            $("#order_results").empty();
+            $("#order_results").append('<table class="table-striped">');
             var header = '<tr>'
             header += '<th style="width:10%">ID</th>'
-            header += '<th style="width:40%">Name</th>'
-            header += '<th style="width:40%">Category</th>'
-            header += '<th style="width:10%">Available</th></tr>'
-            $("#search_results").append(header);
+            header += '<th style="width:40%">Customer ID</th>'
+            header += '<th style="width:40%">Date</th>'
+            header += '<th style="width:10%">Status</th></tr>'
+            $("#order_results").append(header);
             for(var i = 0; i < res.length; i++) {
-                pet = res[i];
-                var row = "<tr><td>"+pet.id+"</td><td>"+pet.name+"</td><td>"+pet.category+"</td><td>"+pet.available+"</td></tr>";
-                $("#search_results").append(row);
+                order = res[i];
+                var row = "<tr><td>"+order.id+"</td><td>"+order.name+"</td><td>"+order.date+"</td><td>"+order.status+"</td></tr>";
+                $("#order_results").append(row);
             }
 
-            $("#search_results").append('</table>');
+            $("#order_results").append('</table>');
 
             flash_message("Success")
         });
