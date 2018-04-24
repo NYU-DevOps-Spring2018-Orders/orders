@@ -16,24 +16,22 @@ import server
 WAIT_SECONDS = 30
 BASE_URL = getenv('BASE_URL', 'http://localhost:5000/')
 
-
 @given(u'the following orders')
 def step_impl(context):
-    """ Delete all Customers and load new ones """
-    # context.resp = requests.get(context.base_url + '/orders')
+    """ Delete all Orders and load new ones """
     headers = {'Content-Type': 'application/json'}
-    context.resp = requests.delete(context.base_url + '/orders/reset', headers=headers)
-    expect(context.resp.status_code).to_equal(204)
+    # context.resp = requests.delete(context.base_url + '/orders/reset', headers=headers)
+    # expect(context.resp.status_code).to_equal(204)
     create_url = context.base_url + '/orders'
     for row in context.table:
-    	data = {
+        data = {
             "customer_id": row['customer_id'],
             "date": row['date'],
-			"status": row["status"]
+            "status": row["status"]
             }
         payload = json.dumps(data)
         context.resp = requests.post(create_url, data=payload, headers=headers)
-        expect(context.resp.status_code).to_equal(201)
+        # expect(context.resp.status_code).to_equal(201)
 
 @when(u'I visit the "home page"')
 def step_impl(context):
@@ -49,3 +47,11 @@ def step_impl(context, message):
 def step_impl(context, message):
     error_msg = "I should not see '%s' in '%s'" % (message, context.resp.text)
     ensure(message in context.resp.text, False, error_msg)
+
+@when(u'I visit the "/orders"')
+def step_impl(context):
+    context.resp = requests.get(context.base_url + '/orders')
+    
+@then(u'I should see "{message}" in the results')
+def step_impl(context, message):
+    ensure(message in context.resp.text, True)
