@@ -257,8 +257,6 @@ class Order(db.Model):
     @staticmethod
     def remove_all():
         """ Removes all Orders from the database """
-        # db.reflect()
-        # db.drop_all()
         db.session.query.delete()
         db.session.commit()
 
