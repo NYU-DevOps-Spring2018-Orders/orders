@@ -316,6 +316,14 @@ def cancel_orders(order_id):
     order.save()
     return make_response(jsonify(order.serialize()), status.HTTP_200_OK)
 
+######################################################################
+# DELETE ALL ORDER DATA (for testing only)
+######################################################################
+@app.route('/orders/reset', methods=['DELETE'])
+def orders_reset():
+    """ Removes all orders from the database """
+    Order.remove_all()
+    return make_response('', status.HTTP_204_NO_CONTENT)
 
 ######################################################################
 # UTILITY FUNCTIONS
@@ -326,6 +334,22 @@ def init_db():
     global app
     # Item.init_db(app)
     Order.init_db(app)
+
+# # load sample data
+def data_load(data):
+    order = Order()
+    order.deserialize(data)
+    order.save()
+
+# load sample data
+# def data_load(payload):
+#     """ Loads a Order into the database """
+#     order = Order(0, payload['customer_id'], payload['date'], payload['status'])
+#     order.save()
+
+def data_reset():
+    """ Removes all Orders from the database """
+    Order.remove_all()
 
 def check_content_type(content_type):
     """ Checks that the media type is correct """

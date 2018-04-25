@@ -182,7 +182,7 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     customer_id = db.Column(db.Integer, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
-    status = db.Column(db.String(80),nullable = False)
+    status = db.Column(db.String(80), nullable=False)
 
     def __repr__(self):
         return '<Order>'
@@ -253,6 +253,13 @@ class Order(db.Model):
         db.init_app(app)
         app.app_context().push()
         db.create_all()  # make our sqlalchemy tables
+
+    @staticmethod
+    def remove_all():
+        """ Removes all Orders from the database """
+        Order.query.delete()
+        Item.query.delete()
+        db.session.commit()
 
     @staticmethod
     def all():
