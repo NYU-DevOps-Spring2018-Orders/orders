@@ -52,7 +52,7 @@ def step_impl(context):
 			}
 		payload = json.dumps(data)
 		context.resp = requests.post(create_url, data=payload, headers=headers)
-		expect(context.resp.status_code).to_equal(201)
+		# expect(context.resp.status_code).to_equal(201)
 
 @when(u'I visit the "home page"')
 def step_impl(context):
@@ -69,18 +69,11 @@ def step_impl(context, message):
     error_msg = "I should not see '%s' in '%s'" % (message, context.resp.text)
     ensure(message in context.resp.text, False, error_msg)
 
-# @when(u'I visit the "/orders"')
-# def step_impl(context):
-#     context.resp = requests.get(context.base_url + '/orders')
+@when(u'I visit the "{url}"')
+def step_impl(context, url):
+    context.resp = requests.get(context.base_url + url)
+    assert context.resp.status_code == 200
 
-################################
-# @when(u'I visit the "/orders"')
-# def step_impl(context):
-# 	# context.driver.get(context.base_url + 'url')
-# 	context.resp = requests.get(context.base_url + '/orders')
-# 	# context.resp = requests.get(context.base_url + '/orders')
-
-# @then(u'I should see "{message}" in the results')
-# def step_impl(context, message):
-# 	ensure(message in context.resp.text, False)
-# 	# expect(context.driver.find_element_by_id(message)).to_contain(message)
+@then(u'I should see "{message}" in the results')
+def step_impl(context, message):
+	ensure(message in context.resp.text, True)
