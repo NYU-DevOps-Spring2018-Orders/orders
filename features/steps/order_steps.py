@@ -18,6 +18,7 @@ BASE_URL = getenv('BASE_URL', 'http://localhost:5000/')
 
 @given(u'the following orders')
 def step_impl(context):
+	""" Delete all Orders and load new ones """
 	headers = {'Content-Type': 'application/json'}
 	context.resp = requests.delete(context.base_url + '/orders/reset', headers=headers)
 	expect(context.resp.status_code).to_equal(204)
