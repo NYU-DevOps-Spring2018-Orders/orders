@@ -16,28 +16,6 @@ import server
 WAIT_SECONDS = 30
 BASE_URL = getenv('BASE_URL', 'http://localhost:5000/')
 
-# @given(u'the following orders')
-# def step_impl(context):
-#     """ Delete all Orders and load new ones """
-#     headers = {'Content-Type': 'application/json'}
-#     # context.resp = requests.delete(context.base_url + '/orders/reset', headers=headers)
-#     # expect(context.resp.status_code).to_equal(204)
-#     create_url = context.base_url + '/orders'
-#     for row in context.table:
-#         data = {
-#             "customer_id": row['customer_id'],
-#             "date": row['date'],
-#             "status": row["status"]
-#             }
-#         payload = json.dumps(data)
-#         context.resp = requests.post(create_url, data=payload, headers=headers)
-#         # expect(context.resp.status_code).to_equal(201)
-
-# @given(u'the following orders')
-# def step_impl(context):
-# 	server.data_reset()
-# 	context.resp = requests.get(context.base_url + '/orders')
-
 @given(u'the following orders')
 def step_impl(context):
 	headers = {'Content-Type': 'application/json'}
@@ -48,11 +26,19 @@ def step_impl(context):
 		data = {
 			"customer_id": row['customer_id'],
 			"date":	 row['date'],
-			"status": row['status']
+			"status": row['status'],
+			"items": [{
+				"id": row['order_id'],
+				"order_id": row['order_id'],
+				"product_id": row['product_id'],
+				"name":	 row['name'],
+				"quantity":	 row['quantity'],
+				"price": row['price']
+				}]
 			}
 		payload = json.dumps(data)
 		context.resp = requests.post(create_url, data=payload, headers=headers)
-		# expect(context.resp.status_code).to_equal(201)
+		expect(context.resp.status_code).to_equal(201)
 
 @when(u'I visit the "home page"')
 def step_impl(context):

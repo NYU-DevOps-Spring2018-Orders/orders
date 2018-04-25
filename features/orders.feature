@@ -5,9 +5,9 @@ Feature: The order microservices back-end
 
 Background:
     Given the following orders
-        | id | customer_id | date             | status     |
-        |  1 | 72          | 2017-12-24T09:29 | returned   |
-        |  2 | 11          | 2018-01-25T09:30 | processing |
+        | id | customer_id | date             | status     | item_id | order_id | product_id | name  | quantity | price |
+        |  1 | 72          | 2017-12-24T09:29 | returned   | 1       | 1        | 14         | cup   | 2        | 10.12 |
+        |  2 | 11          | 2018-01-25T09:30 | processing | 1       | 2        | 7          | box   | 1        | 5.32  |
 
 Scenario: The server is running
     When I visit the "Home Page"
