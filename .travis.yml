@@ -8,8 +8,8 @@ install: "pip install -r requirements.txt"
 # commands to run tests
 before_script: 
   - redis-cli ping
-  # - python server.py &  # start a Web server in the background
-  # - sleep 3 # give Web server some time to bind to sockets, etc
+  - python server.py &  # start a Web server in the background
+  - sleep 3 # give Web server some time to bind to sockets, etc
 
 script:
   - nosetests
