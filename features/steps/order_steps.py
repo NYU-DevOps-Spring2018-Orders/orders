@@ -72,7 +72,6 @@ def step_impl(context, element_name, text_string):
 # to get the element id of any button
 ##################################################################
 
-# List all orders
 @when(u'I press the "{button}" order button')
 def step_impl(context, button):
     button_id = button.lower() + '-btn'
@@ -98,6 +97,8 @@ def step_impl(context, name):
 
 @then(u'I should see the message "{message}"')
 def step_impl(context, message):
+    #element = context.driver.find_element_by_id('flash_message')
+    #expect(element.text).to_contain(message)
     found = WebDriverWait(context.driver, WAIT_SECONDS).until(
         expected_conditions.text_to_be_present_in_element(
             (By.ID, 'flash_message'),
@@ -106,7 +107,6 @@ def step_impl(context, message):
     )
     expect(found).to_be(True)
 
-# List all orders
 @when(u'I press the "{button}" item button')
 def step_impl(context, button):
     button_id = button.lower() + '-btn-item'
@@ -127,11 +127,3 @@ def step_impl(context, name):
     element = context.driver.find_element_by_id('item_results')
     error_msg = "I should not see '%s' in '%s'" % (name, element.text)
     ensure(name in element.text, False, error_msg)
-
-# @given(u'the following time')
-# @when(u'I set the time "{element_name}" to "{text_string}"')
-# def step_impl(context, element_name, text_string):
-#     element_id = element_name
-#     element = context.driver.find_element_by_id(element_id)
-#     element.clear()
-#     element.send_keys(text_string) 
