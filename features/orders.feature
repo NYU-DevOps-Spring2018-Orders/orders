@@ -15,6 +15,14 @@ Scenario: The server is running
     And I should not see "404 Not Found"
 
 Scenario: List all orders
-    When I visit the "/orders"
-    Then I should see "72" in the results
-    And I should see "returned" in the results
+    When I visit the "Home Page"
+    And I press the "list" order button
+    Then I should see "72" in the order results
+    And I should not see "kitty" in the order results
+
+Scenario: List all items
+    When I visit the "Home Page"
+    And I press the "list" item button
+    Then I should see "cup" in the item results
+    And I should see "7" in the item results
+    And I should not see "leo" in the item results
