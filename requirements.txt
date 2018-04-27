@@ -3,6 +3,7 @@ flake8
 Flask==0.12
 Flask-API==0.6.9
 Flask-SQLAlchemy==2.1
+flasgger==0.8.1
 pylint
 
 # PostgreSQL
