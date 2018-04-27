@@ -104,7 +104,49 @@ def index():
 def create_order():
     """
     Creates an Order object based on the JSON posted
+    This endpoint will create an Order based the data in the body that is posted
+    ---
+    tags:
+      - Orders
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          id: data
+          required:
+            - customer_id
+            - order_status
+            - date
+          properties:
+            customer_id:
+              type: integer
+              description: the customer id for the order
+            order_status:
+              type: string
+              description: the order status
+            date:
+              type: string
+              description: the date of the order
+            items:
+              type: array
+              items:
+                schema:
+                  $ref: '#/definitions/Item'
+              description: the order's items
+    responses:
+      201:
+        description: Order created
+        schema:
+          $ref: '#/definitions/Order'
+      400:
+        description: Bad Request (the posted data was not valid)
     """
+
     check_content_type('application/json')
     order = Order()
     json_post = request.get_json()
@@ -298,7 +340,7 @@ def list_orders():
           customer_id:
             type: integer
             description: the customer id for the order
-         order_status:
+          order_status:
             type: string
             description: the order status
           date:
