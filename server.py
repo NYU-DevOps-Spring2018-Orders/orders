@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 from flask import Flask, jsonify, request, url_for, make_response, abort
+from flasgger import Swagger
 from flask_api import status    # HTTP Status Codes
 from werkzeug.exceptions import NotFound
 
@@ -21,6 +22,26 @@ app.config['LOGGING_LEVEL'] = logging.INFO
 # Pull options from environment
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
 PORT = os.getenv('PORT', '5000')
+
+
+######################################################################
+# Swagger Config
+######################################################################
+app.config['SWAGGER'] = {
+    "swagger_version": "2.0",
+    "specs": [
+        {
+            "version": "1.0.0",
+            "title": "Orders Microservice Swagger App",
+            "description": "This is a microservice for orders.",
+            "endpoint": 'v1_spec',
+            "route": '/v1/spec'
+        }
+    ]
+}
+
+# Initialize Swagger after configuring it
+Swagger(app)
 
 
 ######################################################################
@@ -154,7 +175,68 @@ def get_item(item_id):
 ######################################################################
 @app.route('/items', methods=['GET'])
 def list_items():
-    """ Returns all of the Items """
+    """ Returns all of the Items
+    ---
+    tags:
+      - Items
+    description: The Items endpoint allows you to query Items
+    parameters:
+      - name: order_id
+        in: query
+        description: the order_id of the Item you are looking for
+        required: true
+        type: integer
+      - name: product_id
+        in: query
+        description: the product_id of the Item you are looking for
+        required: true
+        type: integer
+      - name: quantity
+        in: query
+        description: the quantity of the Item you are looking for
+        required: true
+        type: integer
+      - name: price
+        in: query
+        description: the price of the Item you are looking for
+        required: true
+        type: number
+      - name: name
+        in: query
+        description: the name of the Item you are looking for
+        required: true
+        type: string
+    definitions:
+      Item:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: unique id assigned internally by service
+          name:
+            type: string
+            description: the item name
+          order_id:
+            type: integer
+            description: the order_id of the item
+          product_id:
+            type: integer
+            description: the product_id of the item
+          quantity:
+            type: integer
+            description: the quantity of the item
+          price:
+            type: number
+            description: the price of the item
+    responses:
+      200:
+        description: An array of Items
+        schema:
+          type: array
+          items:
+            schema:
+              $ref: '#/definitions/Item'
+    """
     items = []
 
     order_id = request.args.get('order_id')
@@ -185,7 +267,52 @@ def list_items():
 ######################################################################
 @app.route('/orders', methods=['GET'])
 def list_orders():
-    """ Returns all of the Orders """
+    """ Returns all of the Orders
+    ---
+    tags:
+      - Orders
+    description: The Orders endpoint allows you to query Orders
+    parameters:
+      - name: customer_id
+        in: query
+        description: the customer_id of the Order you are looking for
+        required: true
+        type: integer
+      - name: order_status
+        in: query
+        description: the status of the Order
+        required: true
+        type: string
+      - name: date
+        in: query
+        description: the Order date
+        required: true
+        type: string
+    definitions:
+      Order:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: unique id assigned internally by service
+          customer_id:
+            type: integer
+            description: the customer id for the order
+         order_status:
+            type: string
+            description: the order status
+          date:
+            type: string
+            description: the date of the order
+    responses:
+      200:
+        description: An array of Orders
+        schema:
+          type: array
+          items:
+            schema:
+              $ref: '#/definitions/Order'
+    """
     orders = []
     customer_id = request.args.get('customer_id')
     order_status = request.args.get('status')
