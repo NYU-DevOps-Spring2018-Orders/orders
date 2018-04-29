@@ -322,14 +322,7 @@ def cancel_orders(order_id):
 @app.route('/orders/reset', methods=['DELETE'])
 def orders_reset():
     """ Removes all orders from the database """
-    items = Item.all()
-    for i in items:
-        i.delete()
-
-    orders = Order.all()
-    for o in orders:
-        o.delete()
-
+    Order.remove_all()
     return make_response('', status.HTTP_204_NO_CONTENT)
 
 ######################################################################
