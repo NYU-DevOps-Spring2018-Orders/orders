@@ -90,7 +90,9 @@ Vagrant.configure(2) do |config|
 
     # Add PostgreSQL tables
     config.vm.provision "shell", inline: <<-SHELL
+      docker exec -it postgres psql -U postgres -c "DROP TABLE test;"
+      docker exec -it postgres psql -U postgres -c "DROP TABLE development;"
       docker exec -it postgres psql -U postgres -c "CREATE DATABASE test;"
-      docker exec -it postgres psql -U postgres -c "CREATE DATABASE database;"
+      docker exec -it postgres psql -U postgres -c "CREATE DATABASE development;"
     SHELL
 end
