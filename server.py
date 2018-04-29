@@ -461,6 +461,19 @@ def delete_order(order_id):
 
     This endpoint will delete an Order based on the id specified in
     the path.  It will also delete the items associated with the order
+    ---
+    tags:
+      - Orders
+    description: Deletes an Order from the database
+    parameters:
+      - name: order_id
+        in: path
+        description: ID of the order to delete
+        type: integer
+        required: true
+    responses:
+      204:
+        description: Order deleted
     """
     order = Order.get(order_id)
     if order:
@@ -477,6 +490,24 @@ def delete_item(order_id, item_id):
     Delete an Item
     This endpoint will delete an Item based on the id specified in
     the path
+    ---
+    tags:
+      - Items
+    description: Deletes an Item from an order from the database
+    parameters:
+      - name: order_id
+        in: path
+        description: ID of the order with an item to delete
+        type: integer
+        required: true
+      - name: item_id
+        in: path
+        description: ID of the item from the order that needs deleting
+        type: integer
+        required: true
+    responses:
+      204:
+        description: Item deleted from order
     """
     item = Item.get(item_id)
 
