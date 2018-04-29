@@ -14,7 +14,7 @@ from models import Order, DataValidationError, db
 from werkzeug.exceptions import NotFound
 from server import app
 
-DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///db/test.db')
+DATABASE_URI = os.getenv('DATABASE_URI', 'postgres://postgres:passw0rd@localhost:5432/test')
 
 ######################################################################
 #  T E S T   C A S E S

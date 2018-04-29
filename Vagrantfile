@@ -82,8 +82,15 @@ Vagrant.configure(2) do |config|
     SHELL
 
     config.vm.provision "docker" do |d|
-      d.pull_images "postgres"
+      d.build_image "/vagrant/docker",
+        args: "-t postgres"
       d.run "postgres",
-        args: "-d --name postgres -p 5432:5432 -v /var/lib/postgresql/data:/var/lib/postgresql/data"
+        args: "-d --name postgres -p 5432:5432 -v /var/lib/postgresql/data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=passw0rd -d postgres"
     end
+
+    # Add PostgreSQL tables
+    config.vm.provision "shell", inline: <<-SHELL
+      docker exec -it postgres psql -U postgres -c "CREATE DATABASE test;"
+      docker exec -it postgres psql -U postgres -c "CREATE DATABASE database;"
+    SHELL
 end
