@@ -18,7 +18,7 @@ $(function () {
     /// Clears all form fields
     function clear_form_data() {
         $("#order_customer_id").val("");
-        $("#order_date").val("2015-02-15T03:35:00");
+        $("#order_date").val("");
         $("#order_status").val("");
     }
 
