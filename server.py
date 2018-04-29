@@ -120,13 +120,13 @@ def create_order():
           id: data
           required:
             - customer_id
-            - order_status
+            - status
             - date
           properties:
             customer_id:
               type: integer
               description: the customer id for the order
-            order_status:
+            status:
               type: string
               description: the order status
             date:
@@ -135,9 +135,19 @@ def create_order():
             items:
               type: array
               items:
-                schema:
-                  $ref: '#/definitions/Item'
-              description: the order's items
+                properties:
+                    name:
+                        type: string
+                        description: the item name
+                    product_id:
+                        type: integer
+                        description: the product_id of the item
+                    quantity:
+                        type: integer
+                        description: the quantity of the item
+                    price:
+                        type: number
+                        description: the price of the item
     responses:
       201:
         description: Order created
