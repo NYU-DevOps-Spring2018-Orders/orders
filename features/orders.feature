@@ -57,4 +57,29 @@ Scenario: Delete an order
     And I press the "delete" order button
     Then I should see the message "Order has been Deleted!"
 
+Scenario: Update an item
+    When I visit the "Home Page"
+    And I set the "item_id" to "1"
+    And I press the "Retrieve" item button
+    Then I should see "2" in the "item_quantity" field
+    When I change "item_quantity" to "3"
+    And I press the "Update" item button
+    Then I should see the message "Success"
+    When I press the "Clear" item button
+    When I set the "item_id" to "1"
+    And I press the "Retrieve" item button
+    Then I should see "3" in the "item_quantity" field
+
+Scenario: Update an order
+    When I visit the "Home Page"
+    And I set the "order_id" to "1"
+    And I press the "Retrieve" order button
+    Then I should see "returned" in the "order_status" field
+    When I change "order_status" to "shipped"
+    And I press the "Update" order button
+    Then I should see the message "Success"
+    When I press the "Clear" order button
+    When I set the "order_id" to "1"
+    And I press the "Retrieve" order button
+    Then I should see "shipped" in the "order_status" field
 
