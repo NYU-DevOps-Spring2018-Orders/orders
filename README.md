@@ -64,7 +64,7 @@ Note there is a test json with the expected fields for the service...
 -  GET - Gets the details of a specific order 
    - `GET http://localhost:5000/orders/{id}`  
 -  GET - Get details of a specific item: 
-   - `GET http://localhost:5000/orders/{id}`
+   - `GET http://localhost:5000/items/{id}`
 -  LIST - All orders in the system: 
    - `GET http://localhost:5000/orders`
 -  LIST - All items in the system: 

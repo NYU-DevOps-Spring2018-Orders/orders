@@ -111,3 +111,6 @@ Thumbs.db
 # db test / dev files
 db/*
 !db/.keep
+
+# PyCharm
+.idea/
