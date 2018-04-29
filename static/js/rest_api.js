@@ -395,9 +395,9 @@ $(function () {
             $("#item_results").append('<table class="table-striped">');
             var header = '<tr>'
             header += '<th style="width:10%">ID</th>'
-            header += '<th style="width:10%">Order ID</th>'
-            header += '<th style="width:10%">Product ID</th>'
-            header += '<th style="width:40%">Name</th>'
+            header += '<th style="width:15%">Order ID</th>'
+            header += '<th style="width:15%">Product ID</th>'
+            header += '<th style="width:25%">Name</th>'
             header += '<th style="width:15%">Quantity</th>'
             header += '<th style="width:15%">Price</th></tr>'
             $("#item_results").append(header);
