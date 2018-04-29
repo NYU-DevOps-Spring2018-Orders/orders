@@ -218,6 +218,7 @@ $(function () {
         ajax.done(function(res){
             //alert(res.toSource())
             $("#order_results").empty();
+            $("#order_results").append('Orders:');
             $("#order_results").append('<table class="table-striped">');
             var header = '<tr>'
             header += '<th style="width:10%">ID</th>'
@@ -390,18 +391,19 @@ $(function () {
         ajax.done(function(res){
             //alert(res.toSource())
             $("#item_results").empty();
+            $("#item_results").append('Items:');
             $("#item_results").append('<table class="table-striped">');
             var header = '<tr>'
             header += '<th style="width:10%">ID</th>'
             header += '<th style="width:10%">Order ID</th>'
             header += '<th style="width:10%">Product ID</th>'
             header += '<th style="width:40%">Name</th>'
-            header += '<th style="width:15%">Quantity</th></tr>'
+            header += '<th style="width:15%">Quantity</th>'
             header += '<th style="width:15%">Price</th></tr>'
             $("#item_results").append(header);
             for(var i = 0; i < res.length; i++) {
                 item = res[i];
-                var row = "<tr><td>"+item.id+"</td><td>"+item.order_id+"</td><td>"+item.product_id+"</td><td>"+item.name+"</td><"+"</td><td>"+item.quantity+"</td><td>"+"</td><td>"+item.price+"</td></tr>";
+                var row = "<tr><td>"+item.id+"</td><td>"+item.order_id+"</td><td>"+item.product_id+"</td><td>"+item.name+"</td><td>"+item.quantity+"</td><td>"+item.price+"</td></tr>";
                 $("#item_results").append(row);
             }
 
