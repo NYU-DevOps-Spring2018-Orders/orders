@@ -378,7 +378,26 @@ def list_orders():
 ######################################################################
 @app.route('/orders/<int:order_id>/items', methods=['GET'])
 def list_items_from_an_order(order_id):
-    """ Returns all items from an Order """
+    """ Returns all items from an Order
+    ---
+    tags:
+      - Orders
+    description: The Orders endpoint allows you to query Orders to get all items in that order
+    parameters:
+      - name: id
+        in: path
+        description: ID of Order to retrieve
+        type: integer
+        required: true
+    responses:
+      200:
+        description: An array of Items in an order
+        schema:
+          type: array
+          items:
+            schema:
+              $ref: '#/definitions/Items'
+    """
     items = Item.find_by_order_id(order_id)
 
     results = [item.serialize() for item in items]
