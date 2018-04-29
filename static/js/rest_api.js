@@ -8,8 +8,11 @@ $(function () {
     function update_form_data(res) {
         $("#order_id").val(res.id);
         $("#order_customer_id").val(res.customer_id);
-        $("#order_date").val(res.order_date);
-        $("#order_status").val(res.order_status);
+        var myDate = new Date(res.date);
+        var date = myDate.toISOString();
+        date = date.slice(0, -8);
+        $("#order_date").val(date);
+        $("#order_status").val(res.status);
     }
 
     /// Clears all form fields
@@ -146,7 +149,6 @@ $(function () {
     $("#retrieve-btn").click(function () {
 
         var order_id = $("#order_id").val();
-
         var ajax = $.ajax({
             type: "GET",
             url: "/orders/" + order_id,
