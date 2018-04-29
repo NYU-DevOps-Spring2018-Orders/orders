@@ -254,12 +254,14 @@ class Order(db.Model):
         app.app_context().push()
         db.create_all()  # make our sqlalchemy tables
 
-    @staticmethod
+@staticmethod
     def remove_all():
         """ Removes all Orders from the database """
-        Item.query.delete()
-        Order.query.delete()
-        db.session.commit()
+        # Item.query.delete()
+        # Order.query.delete()
+        # db.session.commit()
+        db.drop_all()
+        db.create_all()
 
     @staticmethod
     def all():
