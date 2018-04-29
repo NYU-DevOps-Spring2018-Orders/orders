@@ -271,27 +271,27 @@ def list_items():
       - name: order_id
         in: query
         description: the order_id of the Item you are looking for
-        required: true
+        required: false
         type: integer
       - name: product_id
         in: query
         description: the product_id of the Item you are looking for
-        required: true
+        required: false
         type: integer
       - name: quantity
         in: query
         description: the quantity of the Item you are looking for
-        required: true
+        required: false
         type: integer
       - name: price
         in: query
         description: the price of the Item you are looking for
-        required: true
+        required: false
         type: number
       - name: name
         in: query
         description: the name of the Item you are looking for
-        required: true
+        required: false
         type: string
     definitions:
       Item:
@@ -365,7 +365,7 @@ def list_orders():
         description: the customer_id of the Order you are looking for
         required: false
         type: integer
-      - name: order_status
+      - name: status
         in: query
         description: the status of the Order
         required: false
@@ -385,7 +385,7 @@ def list_orders():
           customer_id:
             type: integer
             description: the customer id for the order
-          order_status:
+          status:
             type: string
             description: the order status
           date:
@@ -533,7 +533,45 @@ def update_orders(order_id):
     """
     Update an Order
 
-    This endpoint will update an Order based the body that is posted
+    This endpoint will update an Order based on the body that is posted
+    ---
+    tags:
+      - Orders
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - name: order_id
+        in: path
+        description: ID of the order that needs updating
+        type: integer
+        required: true
+      - in: body
+        name: body
+        schema:
+          id: data
+          required:
+            - customer_id
+            - status
+            - date
+          properties:
+            customer_id:
+                type: integer
+                description: the customer id for the order
+            status:
+                type: string
+                description: the order status
+            date:
+                type: string
+                description: the date of the order
+    responses:
+      200:
+        description: Order updated
+        schema:
+          $ref: '#/definitions/Order'
+      400:
+        description: Bad Request (the posted data was not valid)
     """
     check_content_type('application/json')
     order = Order.get(order_id)
@@ -553,7 +591,53 @@ def update_items(order_id, item_id):
     """
     Update an Item
 
-    This endpoint will update an Item based the body that is posted
+    This endpoint will update an Item for an order based on the body that is posted
+    ---
+    tags:
+      - Items
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - name: order_id
+        in: path
+        description: ID of the order that has item to be updated
+        type: integer
+        required: true
+      - name: item_id
+        in: path
+        description: ID of the item that needs updating of a specified order
+        type: integer
+        required: true
+      - in: body
+        name: body
+        schema:
+          id: data
+          required:
+            - name
+            - product_id
+            - quantity
+            - price
+          name:
+            type: string
+            description: the item name
+          product_id:
+            type: integer
+            description: the product_id of the item
+          quantity:
+            type: integer
+            description: the quantity of the item
+          price:
+            type: number
+            description: the price of the item
+    responses:
+      200:
+        description: Item updated
+        schema:
+          $ref: '#/definitions/Item'
+      400:
+        description: Bad Request (the posted data was not valid)
     """
     check_content_type('application/json')
     item = Item.get(item_id)
