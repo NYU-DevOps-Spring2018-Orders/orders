@@ -197,8 +197,25 @@ def create_order():
 def get_orders(order_id):
     """
     Retrieve a single Order
-
-    This endpoint will return a Order based on it's id
+    This endpoint will return an Order based on it's id
+    ---
+    tags:
+      - Orders
+    produces:
+      - application/json
+    parameters:
+      - name: order_id
+        in: path
+        description: ID of order to retrieve
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Order details returned
+        schema:
+          $ref: '#/definitions/Order'
+      404:
+        description: Order not found
     """
     order = Order.get(order_id)
     if not order:
@@ -215,6 +232,24 @@ def get_item(item_id):
     Retrieve a single Item
 
     This endpoint will return a Item based on it's id
+    ---
+    tags:
+      - Items
+    produces:
+      - application/json
+    parameters:
+      - name: item_id
+        in: path
+        description: ID of item to retrieve
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Item details returned
+        schema:
+          $ref: '#/definitions/Item'
+      404:
+        description: Item not found
     """
     item = Item.get(item_id)
     if not item:
