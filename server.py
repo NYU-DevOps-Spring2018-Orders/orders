@@ -318,17 +318,17 @@ def list_orders():
       - name: customer_id
         in: query
         description: the customer_id of the Order you are looking for
-        required: true
+        required: false
         type: integer
       - name: order_status
         in: query
         description: the status of the Order
-        required: true
+        required: false
         type: string
       - name: date
         in: query
         description: the Order date
-        required: true
+        required: false
         type: string
     definitions:
       Order:
@@ -382,9 +382,11 @@ def list_items_from_an_order(order_id):
     ---
     tags:
       - Orders
+    produces:
+      - application/json
     description: The Orders endpoint allows you to query Orders to get all items in that order
     parameters:
-      - name: id
+      - name: order_id
         in: path
         description: ID of Order to retrieve
         type: integer
