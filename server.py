@@ -571,9 +571,22 @@ def update_items(order_id, item_id):
 @app.route('/orders/<int:order_id>/cancel', methods=['PUT'])
 def cancel_orders(order_id):
     """
-    cancel an Order
+    Cancel an Order
 
     This endpoint will update an Order based the body that is posted
+    ---
+    tags:
+      - Orders
+    description: Changes the status of an order to cancelled
+    parameters:
+      - name: order_id
+        in: path
+        description: ID of the order that should be canceled
+        type: integer
+        required: true
+    responses:
+      204:
+        description: Order cancelled
     """
     order = Order.get(order_id)
     if not order:
