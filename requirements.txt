@@ -6,6 +6,7 @@ Flask-SQLAlchemy==2.1
 pylint
 
 # PostgreSQL
+psycopg2
 psycopg2-binary
 SQLAlchemy==1.1.5
 
