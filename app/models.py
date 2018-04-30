@@ -247,9 +247,6 @@ class Order(db.Model):
         Order.query.delete()
         db.session.commit()
 
-        db.drop_all()
-        db.create_all()
-
     @staticmethod
     def all():
         """
