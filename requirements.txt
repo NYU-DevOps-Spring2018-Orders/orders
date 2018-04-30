@@ -7,6 +7,7 @@ pylint
 
 # PostgreSQL
 psycopg2
+psycopg2-binary
 SQLAlchemy==1.1.5
 
 # Used for testing
