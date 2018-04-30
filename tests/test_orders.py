@@ -166,6 +166,10 @@ class TestOrders(unittest.TestCase):
         order.save()
         order1 = Order(customer_id=2, date=date,status = 'processing')
         order1.save()
+
+        date_converted = str(date.year) + "-" + str(date.month) + "-" + str(date.day) + "T" + \
+                         str(date.hour) + ":" + str(date.minute)
+
         order2 = Order.find_by_date(date)
         self.assertEqual(order2[0].customer_id, order.customer_id)
         self.assertEqual(order2[0].status, order.status)
@@ -174,7 +178,7 @@ class TestOrders(unittest.TestCase):
     def test_find_by_status(self):
         """ Find orders by status """
         date = datetime.now()
-        order = Order(customer_id=1, date=date, status = 'processing')
+        order = Order(customer_id=1,  date=date, status = 'processing')
         order.save()
         order1 = Order(customer_id=2, date=date, status = 'processing')
         order1.save()
