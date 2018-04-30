@@ -309,7 +309,10 @@ class Order(db.Model):
         Args:
             date (DateTime): the date of the Orders you want to match
         """
-        date_converted = datetime.strptime(date, "%Y-%m-%dT%H:%M")
+        if type(date) == datetime:
+            date_converted = date
+        else:
+            date_converted = datetime.strptime(date, "%Y-%m-%dT%H:%M")
         Order.logger.info('Processing date query for %s ...', date_converted)
         return Order.query.filter(Order.date == date_converted)
 
