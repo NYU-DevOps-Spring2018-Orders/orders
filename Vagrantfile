@@ -74,25 +74,29 @@ Vagrant.configure(2) do |config|
       sudo pip install -r requirements.txt
     SHELL
 
-    # Add PostgreSQL docker container
+    ######################################################################
+    # Add MySQL docker container
+    ######################################################################
     config.vm.provision "shell", inline: <<-SHELL
-      # Prepare PostgreSQL data share
-      sudo mkdir -p /var/lib/postgresql/data
-      sudo chown vagrant:vagrant /var/lib/postgresql/data
+      # Prepare MySQL data share
+      sudo mkdir -p /var/lib/mysql
+      sudo chown vagrant:vagrant /var/lib/mysql
     SHELL
-
+    # Add MySQL docker container
     config.vm.provision "docker" do |d|
-      d.build_image "/vagrant/docker",
-        args: "-t postgres"
-      d.run "postgres",
-        args: "-d --name postgres -p 5432:5432 -v /var/lib/postgresql/data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=passw0rd -d postgres"
+      d.pull_images "mariadb"
+      d.run "mariadb",
+        args: "--restart=always -d --name mariadb -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes"
     end
 
-    # Add PostgreSQL tables
+    # Create the database after Docker is running
     config.vm.provision "shell", inline: <<-SHELL
-      docker exec -it postgres psql -U postgres -c "DROP TABLE test;"
-      docker exec -it postgres psql -U postgres -c "DROP TABLE development;"
-      docker exec -it postgres psql -U postgres -c "CREATE DATABASE test;"
-      docker exec -it postgres psql -U postgres -c "CREATE DATABASE development;"
+      # Wait for mariadb to come up
+      echo "Waiting 20 seconds for mariadb to start..."
+      sleep 20
+      cd /vagrant
+      python manage.py development
+      python manage.py test
+      cd
     SHELL
 end

@@ -1,5 +1,6 @@
 import os
 import sys
+from app import app
 import logging
 from flask import Flask, jsonify, request, url_for, make_response, abort
 from flask_api import status    # HTTP Status Codes
@@ -331,9 +332,7 @@ def orders_reset():
 
 def init_db():
     """ Initialies the SQLAlchemy app """
-    global app
-    # Item.init_db(app)
-    Order.init_db(app)
+    Order.init_db()
 
 # # load sample data
 def data_load(data):
@@ -382,10 +381,10 @@ def initialize_logging(log_level=logging.INFO):
 ######################################################################
 # MAIN
 ######################################################################
-if __name__ == "__main__":
-    print "========================================="
-    print " ORDERS  SERVICE STARTING"
-    print "========================================="
-    initialize_logging(logging.INFO)
-    init_db()  # make our sqlalchemy tables
-    app.run(host='0.0.0.0', port=int(PORT), debug=DEBUG)
+# if __name__ == "__main__":
+#     print "========================================="
+#     print " ORDERS  SERVICE STARTING"
+#     print "========================================="
+#     initialize_logging(logging.INFO)
+#     init_db()  # make our sqlalchemy tables
+#     app.run(host='0.0.0.0', port=int(PORT), debug=DEBUG)

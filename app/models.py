@@ -3,7 +3,7 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 # Create the SQLAlchemy object to be initialized later in init_db()
-db = SQLAlchemy()
+from . import db
 
 class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """
@@ -85,10 +85,6 @@ class Item(db.Model):
     def init_db(app):
         """ Initializes the database session """
         Item.logger.info('Initializing database')
-        Item.app = app
-        # This is where we initialize SQLAlchemy from the Flask app
-        db.init_app(app)
-        app.app_context().push()
         db.create_all()  # make our sqlalchemy tables
 
     @staticmethod
@@ -258,10 +254,8 @@ class Order(db.Model):
     def remove_all():
         """ Removes all Orders from the database """
         # Item.query.delete()
-        # Order.query.delete()
-        # db.session.commit()
-        db.drop_all()
-        db.create_all()
+        Order.query.delete()
+        db.session.commit()
 
     @staticmethod
     def all():

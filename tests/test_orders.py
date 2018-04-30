@@ -10,11 +10,12 @@ import unittest
 import os
 from datetime import datetime
 
-from models import Order, DataValidationError, db
+from app import app, db
+from app.models import Order, DataValidationError
 from werkzeug.exceptions import NotFound
 from server import app
 
-DATABASE_URI = os.getenv('DATABASE_URI', 'postgres://postgres:passw0rd@localhost:5432/test')
+DATABASE_URI = os.getenv('DATABASE_URI', None)
 
 ######################################################################
 #  T E S T   C A S E S

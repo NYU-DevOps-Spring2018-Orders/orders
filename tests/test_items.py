@@ -8,11 +8,11 @@ Test cases can be run with:
 
 import unittest
 import os
-from models import Item, DataValidationError, db
+from app import app, db
+from app.models import Item, DataValidationError
 from werkzeug.exceptions import NotFound
-from server import app
 
-DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///db/test.db')
+DATABASE_URI = os.getenv('DATABASE_URI', None)
 
 ######################################################################
 #  T E S T   C A S E S
@@ -202,7 +202,7 @@ class TestItems(unittest.TestCase):
         self.assertEqual(items[0].name, "hammer")
         self.assertEqual(items[0].quantity, 2)
         self.assertEqual(items[0].price, 11)
-        
+
     def test_non_dict_raises_error(self):
         """ Pass invalid data structure deserialize """
         data = [1,2,3]

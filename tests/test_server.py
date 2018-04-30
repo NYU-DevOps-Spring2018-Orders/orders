@@ -14,10 +14,10 @@ from datetime import datetime
 from flask_api import status    # HTTP Status Codes
 from mock import MagicMock, patch
 
-from models import Item, Order, DataValidationError, db
-import server
+from app import db, server
+from app.models import Item, Order, DataValidationError, db
 
-DATABASE_URI = os.getenv('DATABASE_URI', 'postgres://postgres:passw0rd@localhost:5432/test')
+DATABASE_URI = os.getenv('DATABASE_URI', None)
 
 # Status Codes
 HTTP_200_OK = 200
