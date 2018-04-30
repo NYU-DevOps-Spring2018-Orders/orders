@@ -162,15 +162,18 @@ class TestOrders(unittest.TestCase):
     def test_find_by_date(self):
         """ Find orders by date """
         date = datetime.now()
-        order = Order(customer_id=1, date=date, status = 'processing')
-        order.save()
-        order1 = Order(customer_id=2, date=date,status = 'processing')
-        order1.save()
 
         date_converted = str(date.year) + "-" + str(date.month) + "-" + str(date.day) + "T" + \
                          str(date.hour) + ":" + str(date.minute)
 
-        order2 = Order.find_by_date(date)
+        date = datetime.strptime(date_converted, "%Y-%m-%dT%H:%M")
+
+        order = Order(customer_id=1, date=date, status = 'processing')
+        order.save()
+        order1 = Order(customer_id=2, date=date, status = 'processing')
+        order1.save()
+
+        order2 = Order.find_by_date(date_converted)
         self.assertEqual(order2[0].customer_id, order.customer_id)
         self.assertEqual(order2[0].status, order.status)
         self.assertEqual(order2[0].date, order.date)
