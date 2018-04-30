@@ -112,5 +112,12 @@ Thumbs.db
 db/*
 !db/.keep
 
-# PyCharm
-.idea/
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+tests/unittests.xml

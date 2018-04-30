@@ -5,8 +5,8 @@ Flask-API==0.6.9
 Flask-SQLAlchemy==2.1
 pylint
 
-# PostgreSQL
-psycopg2
+# MySQL
+PyMySQL==0.7.11
 SQLAlchemy==1.1.5
 
 # Used for testing

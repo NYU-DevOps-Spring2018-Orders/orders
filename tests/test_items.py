@@ -1,18 +1,18 @@
 """
 Test cases for Item Model
-
 Test cases can be run with:
   nosetests
   coverage report -m
 """
 
-import unittest
+from datetime import datetime
 import os
-from models import Item, DataValidationError, db
+import unittest
+from app import app, db
+from app.models import Order, Item, DataValidationError
 from werkzeug.exceptions import NotFound
-from server import app
 
-DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///db/test.db')
+DATABASE_URI = os.getenv('DATABASE_URI', None)
 
 ######################################################################
 #  T E S T   C A S E S
@@ -32,9 +32,14 @@ class TestItems(unittest.TestCase):
         pass
 
     def setUp(self):
-        Item.init_db(app)
+        Order.init_db()
         db.drop_all()    # clean up the last tests
         db.create_all()  # make our sqlalchemy tables
+
+        date = datetime.now()
+
+        order = Order(customer_id=1, date=date, status = 'processing').save()
+        order = Order(customer_id=2, date=date, status = 'processing').save()
 
     def tearDown(self):
         db.session.remove()

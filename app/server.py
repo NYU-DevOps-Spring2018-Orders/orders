@@ -1,28 +1,17 @@
-import os
 import sys
 import logging
 from flask import Flask, jsonify, request, url_for, make_response, abort
-from flasgger import Swagger
 from flask_api import status    # HTTP Status Codes
+from flasgger import Swagger
+from app.models import Order, Item, DataValidationError
+from app import app
 from werkzeug.exceptions import NotFound
 
-from flask_sqlalchemy import SQLAlchemy
 
-from models import Order, Item, DataValidationError
-from vcap import get_database_uri
-
-app = Flask(__name__)
-
-# dev config
-app.config['SQLALCHEMY_DATABASE_URI'] = get_database_uri()
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'please, tell nobody... Shhhh'
-app.config['LOGGING_LEVEL'] = logging.INFO
-
-# Pull options from environment
-DEBUG = (os.getenv('DEBUG', 'False') == 'True')
-PORT = os.getenv('PORT', '5000')
-
+"""
+Order API Controller
+This modules provides a REST API for the Order Model
+"""
 
 ######################################################################
 # Swagger Config
@@ -695,8 +684,7 @@ def orders_reset():
 def init_db():
     """ Initialies the SQLAlchemy app """
     global app
-    # Item.init_db(app)
-    Order.init_db(app)
+    Order.init_db()
 
 # # load sample data
 def data_load(data):
@@ -740,15 +728,3 @@ def initialize_logging(log_level=logging.INFO):
         app.logger.addHandler(handler)
         app.logger.setLevel(log_level)
         app.logger.info('Logging handler established')
-
-
-######################################################################
-# MAIN
-######################################################################
-if __name__ == "__main__":
-    print "========================================="
-    print " ORDERS  SERVICE STARTING"
-    print "========================================="
-    initialize_logging(logging.INFO)
-    init_db()  # make our sqlalchemy tables
-    app.run(host='0.0.0.0', port=int(PORT), debug=DEBUG)

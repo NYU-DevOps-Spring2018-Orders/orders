@@ -7,16 +7,18 @@ install: "pip install -r requirements.txt"
 
 # commands to run tests
 before_script:
-  - psql -c 'create database orders_test;' -U postgres
-  - python server.py &  # start a Web server in the background
-  - sleep 3 # give Web server some time to bind to sockets, etc
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS development;'
+
+env:
+  global:
+    - DATABASE_URI='mysql+pymysql://root@localhost:3306/development'
 
 script:
   - nosetests
   - behave
 
 after_success:
- - codecov
+  - codecov
 
 services:
-  - postgresql
+  - cleardb
