@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 from flask import Flask, jsonify, request, url_for, make_response, abort
+from flasgger import Swagger
 from flask_api import status    # HTTP Status Codes
 from werkzeug.exceptions import NotFound
 
@@ -21,6 +22,26 @@ app.config['LOGGING_LEVEL'] = logging.INFO
 # Pull options from environment
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
 PORT = os.getenv('PORT', '5000')
+
+
+######################################################################
+# Swagger Config
+######################################################################
+app.config['SWAGGER'] = {
+    "swagger_version": "2.0",
+    "specs": [
+        {
+            "version": "1.0.0",
+            "title": "Orders Microservice Swagger App",
+            "description": "This is a microservice for orders.",
+            "endpoint": 'v1_spec',
+            "route": '/v1/spec'
+        }
+    ]
+}
+
+# Initialize Swagger after configuring it
+Swagger(app)
 
 
 ######################################################################
@@ -83,7 +104,59 @@ def index():
 def create_order():
     """
     Creates an Order object based on the JSON posted
+    This endpoint will create an Order based the data in the body that is posted
+    ---
+    tags:
+      - Orders
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          id: data
+          required:
+            - customer_id
+            - status
+            - date
+          properties:
+            customer_id:
+              type: integer
+              description: the customer id for the order
+            status:
+              type: string
+              description: the order status
+            date:
+              type: string
+              description: the date of the order
+            items:
+              type: array
+              items:
+                properties:
+                    name:
+                        type: string
+                        description: the item name
+                    product_id:
+                        type: integer
+                        description: the product_id of the item
+                    quantity:
+                        type: integer
+                        description: the quantity of the item
+                    price:
+                        type: number
+                        description: the price of the item
+    responses:
+      201:
+        description: Order created
+        schema:
+          $ref: '#/definitions/Order'
+      400:
+        description: Bad Request (the posted data was not valid)
     """
+
     check_content_type('application/json')
     order = Order()
     json_post = request.get_json()
@@ -124,8 +197,25 @@ def create_order():
 def get_orders(order_id):
     """
     Retrieve a single Order
-
-    This endpoint will return a Order based on it's id
+    This endpoint will return an Order based on it's id
+    ---
+    tags:
+      - Orders
+    produces:
+      - application/json
+    parameters:
+      - name: order_id
+        in: path
+        description: ID of order to retrieve
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Order details returned
+        schema:
+          $ref: '#/definitions/Order'
+      404:
+        description: Order not found
     """
     order = Order.get(order_id)
     if not order:
@@ -142,6 +232,24 @@ def get_item(item_id):
     Retrieve a single Item
 
     This endpoint will return a Item based on it's id
+    ---
+    tags:
+      - Items
+    produces:
+      - application/json
+    parameters:
+      - name: item_id
+        in: path
+        description: ID of item to retrieve
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Item details returned
+        schema:
+          $ref: '#/definitions/Item'
+      404:
+        description: Item not found
     """
     item = Item.get(item_id)
     if not item:
@@ -154,7 +262,68 @@ def get_item(item_id):
 ######################################################################
 @app.route('/items', methods=['GET'])
 def list_items():
-    """ Returns all of the Items """
+    """ Returns all of the Items
+    ---
+    tags:
+      - Items
+    description: The Items endpoint allows you to query Items
+    parameters:
+      - name: order_id
+        in: query
+        description: the order_id of the Item you are looking for
+        required: false
+        type: integer
+      - name: product_id
+        in: query
+        description: the product_id of the Item you are looking for
+        required: false
+        type: integer
+      - name: quantity
+        in: query
+        description: the quantity of the Item you are looking for
+        required: false
+        type: integer
+      - name: price
+        in: query
+        description: the price of the Item you are looking for
+        required: false
+        type: number
+      - name: name
+        in: query
+        description: the name of the Item you are looking for
+        required: false
+        type: string
+    definitions:
+      Item:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: unique id assigned internally by service
+          name:
+            type: string
+            description: the item name
+          order_id:
+            type: integer
+            description: the order_id of the item
+          product_id:
+            type: integer
+            description: the product_id of the item
+          quantity:
+            type: integer
+            description: the quantity of the item
+          price:
+            type: number
+            description: the price of the item
+    responses:
+      200:
+        description: An array of Items
+        schema:
+          type: array
+          items:
+            schema:
+              $ref: '#/definitions/Item'
+    """
     items = []
 
     order_id = request.args.get('order_id')
@@ -185,7 +354,52 @@ def list_items():
 ######################################################################
 @app.route('/orders', methods=['GET'])
 def list_orders():
-    """ Returns all of the Orders """
+    """ Returns all of the Orders
+    ---
+    tags:
+      - Orders
+    description: The Orders endpoint allows you to query Orders
+    parameters:
+      - name: customer_id
+        in: query
+        description: the customer_id of the Order you are looking for
+        required: false
+        type: integer
+      - name: status
+        in: query
+        description: the status of the Order
+        required: false
+        type: string
+      - name: date
+        in: query
+        description: the Order date
+        required: false
+        type: string
+    definitions:
+      Order:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: unique id assigned internally by service
+          customer_id:
+            type: integer
+            description: the customer id for the order
+          status:
+            type: string
+            description: the order status
+          date:
+            type: string
+            description: the date of the order
+    responses:
+      200:
+        description: An array of Orders
+        schema:
+          type: array
+          items:
+            schema:
+              $ref: '#/definitions/Order'
+    """
     orders = []
     customer_id = request.args.get('customer_id')
     order_status = request.args.get('status')
@@ -209,7 +423,28 @@ def list_orders():
 ######################################################################
 @app.route('/orders/<int:order_id>/items', methods=['GET'])
 def list_items_from_an_order(order_id):
-    """ Returns all items from an Order """
+    """ Returns all items from an Order
+    ---
+    tags:
+      - Orders
+    produces:
+      - application/json
+    description: The Orders endpoint allows you to query Orders to get all items in that order
+    parameters:
+      - name: order_id
+        in: path
+        description: ID of Order to retrieve
+        type: integer
+        required: true
+    responses:
+      200:
+        description: An array of Items in an order
+        schema:
+          type: array
+          items:
+            schema:
+              $ref: '#/definitions/Items'
+    """
     items = Item.find_by_order_id(order_id)
 
     results = [item.serialize() for item in items]
@@ -226,6 +461,19 @@ def delete_order(order_id):
 
     This endpoint will delete an Order based on the id specified in
     the path.  It will also delete the items associated with the order
+    ---
+    tags:
+      - Orders
+    description: Deletes an Order from the database
+    parameters:
+      - name: order_id
+        in: path
+        description: ID of the order to delete
+        type: integer
+        required: true
+    responses:
+      204:
+        description: Order deleted
     """
     order = Order.get(order_id)
     if order:
@@ -242,6 +490,24 @@ def delete_item(order_id, item_id):
     Delete an Item
     This endpoint will delete an Item based on the id specified in
     the path
+    ---
+    tags:
+      - Items
+    description: Deletes an Item from an order from the database
+    parameters:
+      - name: order_id
+        in: path
+        description: ID of the order with an item to delete
+        type: integer
+        required: true
+      - name: item_id
+        in: path
+        description: ID of the item from the order that needs deleting
+        type: integer
+        required: true
+    responses:
+      204:
+        description: Item deleted from order
     """
     item = Item.get(item_id)
 
@@ -267,7 +533,45 @@ def update_orders(order_id):
     """
     Update an Order
 
-    This endpoint will update an Order based the body that is posted
+    This endpoint will update an Order based on the body that is posted
+    ---
+    tags:
+      - Orders
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - name: order_id
+        in: path
+        description: ID of the order that needs updating
+        type: integer
+        required: true
+      - in: body
+        name: body
+        schema:
+          id: data
+          required:
+            - customer_id
+            - status
+            - date
+          properties:
+            customer_id:
+                type: integer
+                description: the customer id for the order
+            status:
+                type: string
+                description: the order status
+            date:
+                type: string
+                description: the date of the order
+    responses:
+      200:
+        description: Order updated
+        schema:
+          $ref: '#/definitions/Order'
+      400:
+        description: Bad Request (the posted data was not valid)
     """
     check_content_type('application/json')
     order = Order.get(order_id)
@@ -287,7 +591,53 @@ def update_items(order_id, item_id):
     """
     Update an Item
 
-    This endpoint will update an Item based the body that is posted
+    This endpoint will update an Item for an order based on the body that is posted
+    ---
+    tags:
+      - Items
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - name: order_id
+        in: path
+        description: ID of the order that has item to be updated
+        type: integer
+        required: true
+      - name: item_id
+        in: path
+        description: ID of the item that needs updating of a specified order
+        type: integer
+        required: true
+      - in: body
+        name: body
+        schema:
+          id: data
+          required:
+            - name
+            - product_id
+            - quantity
+            - price
+          name:
+            type: string
+            description: the item name
+          product_id:
+            type: integer
+            description: the product_id of the item
+          quantity:
+            type: integer
+            description: the quantity of the item
+          price:
+            type: number
+            description: the price of the item
+    responses:
+      200:
+        description: Item updated
+        schema:
+          $ref: '#/definitions/Item'
+      400:
+        description: Bad Request (the posted data was not valid)
     """
     check_content_type('application/json')
     item = Item.get(item_id)
@@ -305,9 +655,22 @@ def update_items(order_id, item_id):
 @app.route('/orders/<int:order_id>/cancel', methods=['PUT'])
 def cancel_orders(order_id):
     """
-    cancel an Order
+    Cancel an Order
 
     This endpoint will update an Order based the body that is posted
+    ---
+    tags:
+      - Orders
+    description: Changes the status of an order to cancelled
+    parameters:
+      - name: order_id
+        in: path
+        description: ID of the order that should be canceled
+        type: integer
+        required: true
+    responses:
+      204:
+        description: Order cancelled
     """
     order = Order.get(order_id)
     if not order:
