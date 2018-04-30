@@ -111,3 +111,10 @@ Scenario: Create a order
     When I press the "Create" order button
     Then I should see the message "Success"
     And I should not see "404 Not Found"
+
+Scenario: Cancel a order
+    When I visit the "Home Page"
+    And I set the "order_id" to "3"
+    And I press the "Cancel" order button
+    Then I should see "cancelled" in the "order_status" field
+    And I should see the message "Order has been Canceled!"

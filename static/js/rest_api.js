@@ -139,7 +139,31 @@ $(function () {
         ajax.fail(function(res){
             flash_message(res.responseJSON.message)
         });
+    });
 
+    // ****************************************
+    // Cancel an Order
+    // ****************************************
+
+    $("#cancel-btn").click(function () {
+
+        var order_id = $("#order_id").val();
+        var ajax = $.ajax({
+            type: "PUT",
+            url: "/orders/" + order_id + "/cancel",
+            contentType:"application/json",
+            data: ''
+        })
+
+        ajax.done(function(res){
+            update_form_data(res)
+            flash_message("Order has been Canceled!")
+        });
+
+        ajax.fail(function(res){
+            clear_form_data()
+            flash_message(res.responseJSON.message)
+        });
     });
 
     // ****************************************
@@ -166,7 +190,6 @@ $(function () {
             clear_form_data()
             flash_message(res.responseJSON.message)
         });
-
     });
 
     // ****************************************
@@ -374,7 +397,6 @@ $(function () {
         $("#item_id").val("");
         clear_item_form_data()
     });
-
 
     // ****************************************
     // View Items
