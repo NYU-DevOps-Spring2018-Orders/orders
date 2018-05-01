@@ -1,9 +1,10 @@
+"""
+Order and Item Model
+"""
+
 import logging
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
-
-# Create the SQLAlchemy object to be initialized later in init_db()
-db = SQLAlchemy()
+from . import db
 
 class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """
@@ -19,7 +20,7 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
     product_id = db.Column(db.Integer, nullable=False)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String(80), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
 
@@ -80,16 +81,6 @@ class Item(db.Model):
             raise DataValidationError('Invalid item: body of request contained ' \
                                       'bad or no data')
         return self
-
-    @staticmethod
-    def init_db(app):
-        """ Initializes the database session """
-        Item.logger.info('Initializing database')
-        Item.app = app
-        # This is where we initialize SQLAlchemy from the Flask app
-        db.init_app(app)
-        app.app_context().push()
-        db.create_all()  # make our sqlalchemy tables
 
     @staticmethod
     def all():
@@ -243,22 +234,17 @@ class Order(db.Model):
         return self
 
     @staticmethod
-    def init_db(app):
+    def init_db():
         """ Initializes the database session """
         Order.logger.info('Initializing database')
-        url = 'With URL {}'.format(app.config['SQLALCHEMY_DATABASE_URI'])
-        Order.logger.info(url)
-        Order.app = app
-        # This is where we initialize SQLAlchemy from the Flask app
-        db.init_app(app)
-        app.app_context().push()
         db.create_all()  # make our sqlalchemy tables
 
     @staticmethod
     def remove_all():
         """ Removes all Orders from the database """
-        Order.query.delete()
         Item.query.delete()
+        db.session.commit()
+        Order.query.delete()
         db.session.commit()
 
     @staticmethod

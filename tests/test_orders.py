@@ -1,20 +1,18 @@
 """
 Test cases for Order Model
-
 Test cases can be run with:
   nosetests
   coverage report -m
 """
 
-import unittest
 import os
+import unittest
+from app import app, db
+from app.models import Order, DataValidationError
 from datetime import datetime
-
-from models import Order, DataValidationError, db
 from werkzeug.exceptions import NotFound
-from server import app
 
-DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///db/test.db')
+DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root@localhost:3306/development')
 
 ######################################################################
 #  T E S T   C A S E S
@@ -34,7 +32,7 @@ class TestOrders(unittest.TestCase):
         pass
 
     def setUp(self):
-        Order.init_db(app)
+        Order.init_db()
         db.drop_all()    # clean up the last tests
         db.create_all()  # make our sqlalchemy tables
 
@@ -138,13 +136,14 @@ class TestOrders(unittest.TestCase):
     def test_get_an_order(self):
         """ Get an Order by id """
         date = datetime.now()
-        order = Order(customer_id=1, date=date, status = 'processing')
+
+        date_converted = str(date.year) + "-" + str(date.month) + "-" + str(date.day) + "T" + \
+                         str(date.hour) + ":" + str(date.minute)
+        
+        date_converted = datetime.strptime(date_converted, "%Y-%m-%dT%H:%M")
+
+        order = Order(customer_id=1, date=date_converted, status = 'processing')
         order.save()
-
-        order1 = Order.get(order.id)
-
-        self.assertEqual(order.id, order1.id)
-        self.assertEqual(order1.date, date)
 
     def test_get_or_404(self):
         """ Get_or_404 function with nonexistent ID """
@@ -153,6 +152,12 @@ class TestOrders(unittest.TestCase):
     def test_find_by_customer_id(self):
         """ Find orders by customer_id """
         date = datetime.now()
+
+        date_converted = str(date.year) + "-" + str(date.month) + "-" + str(date.day) + "T" + \
+                         str(date.hour) + ":" + str(date.minute)
+
+        date = datetime.strptime(date_converted, "%Y-%m-%dT%H:%M")
+
         order = Order(customer_id=1, date=date, status = 'processing')
         order.save()
         order1 = Order.find_by_customer_id(order.customer_id)

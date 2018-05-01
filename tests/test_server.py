@@ -1,23 +1,21 @@
 """
 Orders API Service Test Suite
-
 Test cases can be run with the following:
   nosetests -v --with-spec --spec-color
   coverage report -m
 """
 
-import unittest
 import os
+import unittest
 import json
 import logging
-from datetime import datetime
 from flask_api import status    # HTTP Status Codes
+from app import server, db
+from app.models import Item, Order, DataValidationError
+from datetime import datetime
 from mock import MagicMock, patch
 
-from models import Item, Order, DataValidationError, db
-import server
-
-DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///db/test.db')
+DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root@localhost:3306/development')
 
 # Status Codes
 HTTP_200_OK = 200
@@ -55,11 +53,18 @@ class TestServer(unittest.TestCase):
         db.create_all()  # create new tables
         date = datetime.now()
 
-        item = Item(order_id=1, product_id=1, name='hammer', quantity=1, price=11.50).save()
-        item = Item(order_id=1, product_id=2, name='toilet paper', quantity=2, price=2.50).save()
-        item = Item(order_id=2, product_id=3, name='beer', quantity=2, price=10.50).save()
-        order = Order(customer_id=1, date=date, status = 'processing').save()
+
+        order = Order(customer_id=1, date=date, status = 'processing').save() 
         order = Order(customer_id=2, date=date, status = 'processing').save()
+
+        order1 = Order()
+        order1 = order1.find_by_customer_id(1)[0]
+        order2 = Order()
+        order2 = order2.find_by_customer_id(2)[0]
+
+        item = Item(order_id=order1.id, product_id=1, name='hammer', quantity=1, price=11.50).save()
+        item = Item(order_id=order1.id, product_id=2, name='toilet paper', quantity=2, price=2.50).save()
+        item = Item(order_id=order2.id, product_id=3, name='beer', quantity=2, price=10.50).save()
         self.app = server.app.test_client()
 
     def tearDown(self):
@@ -182,7 +187,7 @@ class TestServer(unittest.TestCase):
         item_count = self.get_item_count()
         # add a new order. order id is 3 since there are 2 orders initially
         new_order = {'customer_id': 1, 'date': "2018-04-23T11:11", 'status': 'processing'}
-        new_order['items'] = [{"order_id": 3, "product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
+        new_order['items'] = [{"product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
         data = json.dumps(new_order)
         resp = self.app.post('/orders', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
@@ -197,7 +202,7 @@ class TestServer(unittest.TestCase):
         """
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['customer_id'], 1)
-        self.assertEqual(new_json['items'][0]["order_id"], 3)
+        self.assertEqual(new_json['items'][0]["product_id"], 3)
         self.assertEqual(len(new_json['items']), 1)
         """
         Check that response is correct for the order and that order count has
