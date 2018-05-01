@@ -242,6 +242,10 @@ $(function () {
                 order = res[i];
                 var row = "<tr><td>"+order.id+"</td><td>"+order.customer_id+"</td><td>"+order.date+"</td><td>"+order.status+"</td></tr>";
                 $("#order_results").append(row);
+
+                if(i == 0) {
+                  update_form_data(res[i]);
+                }
             }
 
             $("#order_results").append('</table>');
@@ -489,6 +493,11 @@ $(function () {
                 item = res[i];
                 var row = "<tr><td>"+item.id+"</td><td>"+item.order_id+"</td><td>"+item.product_id+"</td><td>"+item.name+"</td><"+"</td><td>"+item.quantity+"</td><td>"+"</td><td>"+item.price+"</td></tr>";
                 $("#item_results").append(row);
+
+                if(i == 0) {
+                  update_item_form_data(res[i]);
+                  $("#item_id").val(res[i].id);
+                }
             }
 
             $("#item_results").append('</table>');
