@@ -16,8 +16,8 @@ before_script:
 #     - DATABASE_URI='mysql+pymysql://root@localhost:3306/development'
 
 script:
-  - nosetests
   - behave
+  - nosetests
 
 after_success:
   - codecov
