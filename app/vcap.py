@@ -28,6 +28,13 @@ def get_database_uri():
         hostname = creds["hostname"]
         port = creds["port"]
         name = creds["name"]
+    elif 'TRAVIS' in os.environ:
+        logging.info("Using Travis")
+        username = 'root'
+        password = ''
+        hostname = 'localhost'
+        port = '3306'
+        name = 'development'
     else:
         logging.info("Using localhost database...")
         username = 'root'
