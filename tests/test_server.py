@@ -187,7 +187,7 @@ class TestServer(unittest.TestCase):
         item_count = self.get_item_count()
         # add a new order. order id is 3 since there are 2 orders initially
         new_order = {'customer_id': 1, 'date': "2018-04-23T11:11", 'status': 'processing'}
-        new_order['items'] = [{"order_id": 3, "product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
+        new_order['items'] = [{"product_id": 3, "name": "Rice", "quantity": 1, "price": "4.50"}]
         data = json.dumps(new_order)
         resp = self.app.post('/orders', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
@@ -202,7 +202,7 @@ class TestServer(unittest.TestCase):
         """
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['customer_id'], 1)
-        self.assertEqual(new_json['items'][0]["order_id"], 3)
+        self.assertEqual(new_json['items'][0]["product_id"], 3)
         self.assertEqual(len(new_json['items']), 1)
         """
         Check that response is correct for the order and that order count has
