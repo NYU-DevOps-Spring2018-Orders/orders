@@ -42,4 +42,40 @@ Scenario: Query an item
     And I set the "item_name" to "laptop"
     And I press the "search" item button
     Then I should see the message "Success"
-    And I should see "72" in the item results    
+    And I should see "72" in the item results
+
+Scenario: Read an order
+    When I visit the "Home Page"
+    And I set the "order_customer_id" to "11"
+    And I press the "search" order Button
+    And I press the "retrieve" order Button
+    Then I should see "11" in the "order_customer_id" field
+    Then I should see "2018-01-25T09:30" in the "order_date" field
+    Then I should see "processing" in the "order_status" field
+    Then I should see the message "Success"
+
+Scenario: Read an item
+    When I visit the "Home Page"
+    And I set the "item_name" to "laptop"
+    And I press the "search" item button
+    And I press the "retrieve" item Button
+    Then I should see "72" in the "item_product_id" field
+    Then I should see "laptop" in the "item_name" field
+    Then I should see "1" in the "item_quantity" field
+    Then I should see "999.32" in the "item_price" field
+    Then I should see the message "Success"
+
+Scenario: Delete an item
+    When I visit the "Home Page"
+    And I set the "item_name" to "laptop"
+    And I press the "search" item button
+    And I press the "retrieve" item button
+    And I press the "delete" item button
+    Then I should see the message "Item has been Deleted!"
+
+Scenario: Delete an order
+    When I visit the "Home Page"
+    And I set the "order_customer_id" to "11"
+    And I press the "search" order Button
+    And I press the "delete" order button
+    Then I should see the message "Order has been Deleted!"
