@@ -79,3 +79,65 @@ Scenario: Delete an order
     And I press the "search" order Button
     And I press the "delete" order button
     Then I should see the message "Order has been Deleted!"
+
+Scenario: Update an item
+    When I visit the "Home Page"
+    And I set the "item_name" to "laptop"
+    And I press the "search" item button
+    And I press the "Retrieve" item button
+    Then I should see "1" in the "item_quantity" field
+    When I change "item_quantity" to "3"
+    And I press the "Update" item button
+    Then I should see the message "Success"
+    When I press the "Clear" item button
+    And I set the "item_name" to "laptop"
+    And I press the "search" item button
+    And I press the "Retrieve" item button
+    Then I should see "3" in the "item_quantity" field
+
+Scenario: Update an order
+    When I visit the "Home Page"
+    And I set the "order_customer_id" to "11"
+    And I press the "search" order Button
+    And I press the "Retrieve" order button
+    Then I should see "processing" in the "order_status" field
+    When I change "order_status" to "shipped"
+    And I press the "Update" order button
+    Then I should see the message "Success"
+    When I press the "Clear" order button
+    And I set the "order_customer_id" to "11"
+    And I press the "search" order Button
+    And I press the "Retrieve" order button
+    Then I should see "shipped" in the "order_status" field
+
+Scenario: Create a order
+    When I visit the "Home Page"
+    And I set the "item_product_id" to "214"
+    And I set the "item_name" to "banana"
+    And I set the "item_quantity" to "10"
+    And I set the "item_price" to "20.34"
+    When I press the "Create" item button
+    And I set the "item_product_id" to "78"
+    And I set the "item_name" to "laptop"
+    And I set the "item_quantity" to "1"
+    And I set the "item_price" to "642.34"
+    When I press the "Create" item button
+    And I set the "item_product_id" to "28"
+    And I set the "item_name" to "apple"
+    And I set the "item_quantity" to "100"
+    And I set the "item_price" to "60.24"
+    When I press the "Create" item button
+    And I set the "order_customer_id" to "123"
+    And I set the time "order_date" to "2018-02-27T19:35"
+    And I set the "order_status" to "processing"
+    When I press the "Create" order button
+    Then I should see the message "Success"
+    And I should not see "404 Not Found"
+
+Scenario: Cancel a order
+    When I visit the "Home Page"
+    And I set the "order_customer_id" to "11"
+    And I press the "search" order Button
+    And I press the "Cancel" order button
+    Then I should see "cancelled" in the "order_status" field
+    And I should see the message "Order has been Canceled!"
