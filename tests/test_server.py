@@ -53,11 +53,18 @@ class TestServer(unittest.TestCase):
         db.create_all()  # create new tables
         date = datetime.now()
 
-        order = Order(customer_id=1, date=date, status = 'processing').save()
+
+        order = Order(customer_id=1, date=date, status = 'processing').save() 
         order = Order(customer_id=2, date=date, status = 'processing').save()
-        item = Item(order_id=1, product_id=1, name='hammer', quantity=1, price=11.50).save()
-        item = Item(order_id=1, product_id=2, name='toilet paper', quantity=2, price=2.50).save()
-        item = Item(order_id=2, product_id=3, name='beer', quantity=2, price=10.50).save()
+
+        order1 = Order()
+        order1 = order1.find_by_customer_id(1)[0]
+        order2 = Order()
+        order2 = order2.find_by_customer_id(2)[0]
+
+        item = Item(order_id=order1.id, product_id=1, name='hammer', quantity=1, price=11.50).save()
+        item = Item(order_id=order1.id, product_id=2, name='toilet paper', quantity=2, price=2.50).save()
+        item = Item(order_id=order2.id, product_id=3, name='beer', quantity=2, price=10.50).save()
         self.app = server.app.test_client()
 
     def tearDown(self):
