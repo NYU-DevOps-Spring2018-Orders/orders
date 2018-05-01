@@ -11,9 +11,9 @@ before_script:
   - python run.py &  # start a Web server in the background
   - sleep 3 # give Web server some time to bind to sockets, etc
 
-env:
-  global:
-    - DATABASE_URI='mysql+pymysql://root@localhost:3306/development'
+# env:
+#   global:
+#     - DATABASE_URI='mysql+pymysql://root@localhost:3306/development'
 
 script:
   - nosetests
