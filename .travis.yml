@@ -8,8 +8,9 @@ install: "pip install -r requirements.txt"
 # commands to run tests
 before_script:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS development;'
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS development;'
   - python run.py &  # start a Web server in the background
-  - sleep 3 # give Web server some time to bind to sockets, etc
+  - sleep 5 # give Web server some time to bind to sockets, etc
 
 env:
   global:
