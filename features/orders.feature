@@ -8,7 +8,7 @@ Background:
         | id | customer_id | date             | status     | order_id | product_id | name   | quantity | price   |
         |  1 | 72          | 2017-12-24T09:29 | returned   | 1        | 14         | cup    | 2        | 10.12   |
         |  2 | 11          | 2018-01-25T09:30 | processing | 2        | 7          | box    | 1        | 5.32    |
-        |  3 | 14          | 2018-02-25T09:30 | processing | 3        | 71         | laptop | 1        | 999.32  |
+        |  3 | 14          | 2018-02-25T09:30 | processing | 3        | 71         | phone  | 1        | 549.99  |
         |  4 | 15          | 2018-02-27T09:30 | processing | 4        | 72         | laptop | 1        | 999.32  |
 
 Scenario: The server is running
@@ -30,3 +30,16 @@ Scenario: List all items
     And I should see "7" in the item results
     And I should not see "leo" in the item results
 
+Scenario: Query a customer
+    When I visit the "Home Page"
+    And I set the "order_customer_id" to "11"
+    And I press the "search" order button
+    Then I should see the message "Success"
+    And I should see "processing" in the order results
+
+Scenario: Query an item
+    When I visit the "Home Page"
+    And I set the "item_name" to "laptop"
+    And I press the "search" item button
+    Then I should see the message "Success"
+    And I should see "72" in the item results    

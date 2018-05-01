@@ -193,6 +193,68 @@ $(function () {
     });
 
     // ****************************************
+    // Retrieve Orders by field
+    // ****************************************
+
+    $("#search-btn").click(function () {
+
+        var customer_id = $("#order_customer_id").val();
+        var date = $("#order_date").val();
+        var status = $("#order_status").val();
+
+        var queryString = ""
+
+        if (customer_id) {
+            queryString += 'customer_id=' + customer_id
+        }
+        if (date) {
+            if (queryString.length > 0) {
+                queryString += '&date=' + date
+            } else {
+                queryString += 'date=' + date
+            }
+        }
+        if (status) {
+            if (queryString.length > 0) {
+                queryString += '&status=' + status
+            } else {
+                queryString += 'status=' + status
+            }
+        }
+
+        var ajax = $.ajax({
+            type: "GET",
+            url: "/orders?" + queryString,
+            contentType:"application/json",
+            data: ''
+        })
+
+        ajax.done(function(res){
+            $("#order_results").empty();
+            $("#order_results").append('<table class="table-striped">');
+            var header = '<tr>'
+            header += '<th style="width:10%">ID</th>'
+            header += '<th style="width:40%">Customer ID</th>'
+            header += '<th style="width:40%">Date</th>'
+            header += '<th style="width:10%">Status</th></tr>'
+            $("#order_results").append(header);
+            for(var i = 0; i < res.length; i++) {
+                order = res[i];
+                var row = "<tr><td>"+order.id+"</td><td>"+order.customer_id+"</td><td>"+order.date+"</td><td>"+order.status+"</td></tr>";
+                $("#order_results").append(row);
+            }
+
+            $("#order_results").append('</table>');
+
+            flash_message("Success")
+        });
+
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
+    });
+
+    // ****************************************
     // Delete an Order
     // ****************************************
 
@@ -357,6 +419,86 @@ $(function () {
             flash_message(res.responseJSON.message)
         });
 
+    });
+
+    // ****************************************
+    // Retrieve Items by field
+    // ****************************************
+
+    $("#search-btn-item").click(function () {
+
+        var product_id = $("#item_product_id").val();
+        var order_id = $("#item_order_id").val();
+        var name = $("#item_name").val();
+        var quantity = $("#item_quantity").val();
+        var price = $("#item_price").val();
+
+        var queryString = ""
+
+        if (product_id) {
+            queryString += 'product_id=' + product_id
+        }
+        if (order_id) {
+            if (queryString.length > 0) {
+                queryString += '&order_id=' + order_id
+            } else {
+                queryString += 'order_id=' + order_id
+            }
+        }
+        if (name) {
+            if (queryString.length > 0) {
+                queryString += '&name=' + name
+            } else {
+                queryString += 'name=' + name
+            }
+        }
+        if (quantity) {
+            if (queryString.length > 0) {
+                queryString += '&quantity=' + quantity
+            } else {
+                queryString += 'quantity=' + quantity
+            }
+        }
+        if (price) {
+            if (queryString.length > 0) {
+                queryString += '&price=' + price
+            } else {
+                queryString += 'price=' + price
+            }
+        }
+
+        var ajax = $.ajax({
+            type: "GET",
+            url: "/items?" + queryString,
+            contentType:"application/json",
+            data: ''
+        })
+
+        ajax.done(function(res){
+            $("#item_results").empty();
+            $("#item_results").append('<table class="table-striped">');
+            var header = '<tr>'
+            header += '<th style="width:10%">ID</th>'
+            header += '<th style="width:10%">Order ID</th>'
+            header += '<th style="width:10%">Product ID</th>'
+            header += '<th style="width:40%">Name</th>'
+            header += '<th style="width:15%">Quantity</th></tr>'
+            header += '<th style="width:15%">Price</th></tr>'
+            $("#item_results").append(header);
+            for(var i = 0; i < res.length; i++) {
+                item = res[i];
+                var row = "<tr><td>"+item.id+"</td><td>"+item.order_id+"</td><td>"+item.product_id+"</td><td>"+item.name+"</td><"+"</td><td>"+item.quantity+"</td><td>"+"</td><td>"+item.price+"</td></tr>";
+                $("#item_results").append(row);
+            }
+
+            $("#item_results").append('</table>');
+
+            flash_message("Success")
+        });
+
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
     });
 
     // ****************************************
