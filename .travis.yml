@@ -7,10 +7,13 @@ install: "pip install -r requirements.txt"
 
 # commands to run tests
 before_script:
-  - python manage.py development
-  - python manage.py test
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
   - python run.py &  # start a Web server in the background
   - sleep 5 # give Web server some time to bind to sockets, etc
+
+env:
+  global:
+    - DATABASE_URI='mysql+pymysql://root@localhost:3306/test'
 
 script:
   - nosetests
