@@ -108,6 +108,6 @@ Note there is a test json with the expected fields for the service...
 
 ## Testing
 
-`nosetests` can be used after starting the VM and switching to the Vagrant directory.  This checks coverage on both `models.py` and `server.py`.  No argument needed regardless of Windows or MacOS
+`nosetests` can be used after starting the VM and switching to the Vagrant directory.  This checks coverage on both `models.py` and `run.py`.  No argument needed regardless of Windows or MacOS
 `python run.py & behave` can be used for behave testing.  Use fg afterwards to terminate the running app.
 
