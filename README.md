@@ -27,7 +27,7 @@ http://nyu-order-service-spring2018.mybluemix.net/apidocs/
 -   Two classes Order and Item.  An Item object represents an item from an associated order.
     - Order: id (auto generated), customer_id, status, date
     - Item: id (auto generated), product_id, order_id, name, quantity, price
--   Status has 3 states - processing (initial state), cancelled, shipped
+-   Status has 4 states - processing (initial state), cancelled, shipped and returned
 -   Two tables - Orders and Items
     - Order table does not include any detail of the items in the order.  ID auto generated
     - Item table has a unique ID that is auto generated as well.  Each Item has a Product ID and Order ID (foreign key) associated with it.
