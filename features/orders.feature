@@ -77,6 +77,7 @@ Scenario: Delete an order
     When I visit the "Home Page"
     And I set the "order_customer_id" to "11"
     And I press the "search" order Button
+    And I press the "retrieve" item button
     And I press the "delete" order button
     Then I should see the message "Order has been Deleted!"
 
@@ -84,15 +85,15 @@ Scenario: Update an item
     When I visit the "Home Page"
     And I set the "item_name" to "laptop"
     And I press the "search" item button
-    And I press the "Retrieve" item button
+    And I press the "retrieve" item button
     Then I should see "1" in the "item_quantity" field
     When I change "item_quantity" to "3"
-    And I press the "Update" item button
+    And I press the "update" item button
     Then I should see the message "Success"
-    When I press the "Clear" item button
+    When I press the "clear" item button
     And I set the "item_name" to "laptop"
     And I press the "search" item button
-    And I press the "Retrieve" item button
+    And I press the "retrieve" item button
     Then I should see "3" in the "item_quantity" field
 
 Scenario: Update an order
@@ -138,6 +139,7 @@ Scenario: Cancel a order
     When I visit the "Home Page"
     And I set the "order_customer_id" to "11"
     And I press the "search" order Button
+    And I press the "Retrieve" order button
     And I press the "Cancel" order button
     Then I should see "cancelled" in the "order_status" field
     And I should see the message "Order has been Canceled!"
