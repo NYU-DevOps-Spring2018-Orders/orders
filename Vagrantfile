@@ -77,6 +77,7 @@ Vagrant.configure(2) do |config|
     # Prepare MySQL data share
     sudo mkdir -p /var/lib/mysql
     sudo chown vagrant:vagrant /var/lib/mysql
+    echo "export DATABASE_URI='mysql+pymysql://root:passw0rd@localhost:3306/test'" >> /etc/profile.d/myvar.sh
   SHELL
 
   # Add MySQL docker container
