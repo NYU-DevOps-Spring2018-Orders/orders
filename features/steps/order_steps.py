@@ -89,7 +89,7 @@ def step_impl(context, button):
 
 		found = WebDriverWait(context.driver, WAIT_SECONDS).until(
 			expected_conditions.text_to_be_present_in_element(
-				(By.ID, button_id), element
+				(By.ID, 'order_id'), element
 			)
 		)
 		expect(found).to_be(True)
@@ -137,7 +137,7 @@ def step_impl(context, button):
 
 		found = WebDriverWait(context.driver, WAIT_SECONDS).until(
 			expected_conditions.text_to_be_present_in_element(
-				(By.ID, button_id), element
+				(By.ID, 'item_id'), element
 			)
 		)
 		expect(found).to_be(True)
