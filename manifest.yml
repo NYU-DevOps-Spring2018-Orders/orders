@@ -1,14 +1,23 @@
 ---
-# This manifest deploys a Python Flask application with a ClearDB database
+# This manifest deploys a Python Flask application with a Redis database
 applications:
-- name: nyu-order-service-s18
+- name: nyu-order-service-spring2018-dev
   memory: 64M
   instances: 2
-  #random-route: true
-  host: nyu-order-service-s18
+  host: nyu-order-service-spring2018-dev
   domain: mybluemix.net
   path: .
   disk_quota: 512M
   buildpack: python_buildpack
   services:
   - ClearDB
+- name: nyu-order-service-spring2018
+  memory: 64M
+  instances: 2
+  host: nyu-order-service-spring2018
+  domain: mybluemix.net
+  path: .
+  disk_quota: 512M
+  buildpack: python_buildpack
+  services:
+  - ClearDB-prod
