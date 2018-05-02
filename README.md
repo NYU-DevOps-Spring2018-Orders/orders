@@ -7,6 +7,21 @@
 Our team handled the order process of a retail website.  Functions are built to create and update as needed both orders and items from a customer.
 
 
+# Accesing the Order service
+
+On IBM Bluemix...
+
+-   dev: http://nyu-order-service-spring2018-dev.mybluemix.net/
+-   prod: http://nyu-order-service-spring2018.mybluemix.net/
+
+Locally...
+
+http://localhost:5000/
+
+To access Swagger documention using Flasgger, the links can be appended with apidocs.  For example,
+
+http://nyu-order-service-spring2018.mybluemix.net/apidocs/
+
 ## Structure
 
 -   Two classes Order and Item.  An Item object represents an item from an associated order.
@@ -46,11 +61,14 @@ After the required software is installed, you can start up the orders service by
     vagrant up
     vagrant ssh
     cd /vagrant
+
+Note: Environment variable for MySQL needs to be set before nosetests will run. Vagrantfile has been updated to address this so manual exporting the variable shouldn't be necessary but just in case this is the command...
+
     export DATABASE_URI='mysql+pymysql://root:passw0rd@localhost:3306/test'
 
 Then run the following command while running the VM...
 
-    python server.py
+    python run.py
 
 Service will be listening on port 5000: http://localhost:5000/
 
@@ -91,3 +109,5 @@ Note there is a test json with the expected fields for the service...
 ## Testing
 
 `nosetests` can be used after starting the VM and switching to the Vagrant directory.  This checks coverage on both `models.py` and `server.py`.  No argument needed regardless of Windows or MacOS
+`python run.py & behave` can be used for behave testing.  Use fg afterwards to terminate the running app.
+
