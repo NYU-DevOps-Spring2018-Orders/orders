@@ -54,7 +54,7 @@ class TestServer(unittest.TestCase):
         date = datetime.now()
 
 
-        order = Order(customer_id=1, date=date, status = 'processing').save() 
+        order = Order(customer_id=1, date=date, status = 'processing').save()
         order = Order(customer_id=2, date=date, status = 'processing').save()
 
         order1 = Order()

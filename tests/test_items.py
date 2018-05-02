@@ -207,7 +207,7 @@ class TestItems(unittest.TestCase):
         self.assertEqual(items[0].name, "hammer")
         self.assertEqual(items[0].quantity, 2)
         self.assertEqual(items[0].price, 11)
-        
+
     def test_non_dict_raises_error(self):
         """ Pass invalid data structure deserialize """
         data = [1,2,3]

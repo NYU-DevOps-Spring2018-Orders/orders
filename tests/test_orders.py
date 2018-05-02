@@ -139,7 +139,7 @@ class TestOrders(unittest.TestCase):
 
         date_converted = str(date.year) + "-" + str(date.month) + "-" + str(date.day) + "T" + \
                          str(date.hour) + ":" + str(date.minute)
-        
+
         date_converted = datetime.strptime(date_converted, "%Y-%m-%dT%H:%M")
 
         order = Order(customer_id=1, date=date_converted, status = 'processing')
