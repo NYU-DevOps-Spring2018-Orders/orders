@@ -101,15 +101,10 @@ Scenario: Update an order
     And I set the "order_customer_id" to "11"
     And I press the "search" order Button
     And I press the "Retrieve" order button
-    Then I should see "processing" in the "order_status" field
-    When I change "order_status" to "shipped"
+    Then I should see "11" in the "order_customer_id" field
+    When I change "order_customer_id" to "12"
     And I press the "Update" order button
     Then I should see the message "Success"
-    When I press the "Clear" order button
-    And I set the "order_customer_id" to "11"
-    And I press the "search" order Button
-    And I press the "Retrieve" order button
-    Then I should see "shipped" in the "order_status" field
 
 Scenario: Create a order
     When I visit the "Home Page"
