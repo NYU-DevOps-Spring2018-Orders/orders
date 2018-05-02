@@ -90,11 +90,6 @@ Scenario: Update an item
     When I change "item_quantity" to "3"
     And I press the "update" item button
     Then I should see the message "Success"
-    When I press the "clear" item button
-    And I set the "item_name" to "laptop"
-    And I press the "search" item button
-    And I press the "retrieve" item button
-    Then I should see "3" in the "item_quantity" field
 
 Scenario: Update an order
     When I visit the "Home Page"
