@@ -12,6 +12,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from app import server
+import time
 
 WAIT_SECONDS = 120
 BASE_URL = getenv('BASE_URL', 'http://localhost:5000/')
@@ -83,6 +84,7 @@ def step_impl(context, button):
 	button_id = button.lower() + '-btn'
 
 	if button == "retrieve":
+		time.sleep(5)
 		element = context.driver.find_element_by_id('order_id').text
 
 		found = WebDriverWait(context.driver, WAIT_SECONDS).until(
@@ -130,6 +132,7 @@ def step_impl(context, button):
 	button_id = button.lower() + '-btn-item'
 
 	if button == "retrieve":
+		time.sleep(5)
 		element = context.driver.find_element_by_id('item_id').text
 
 		found = WebDriverWait(context.driver, WAIT_SECONDS).until(
