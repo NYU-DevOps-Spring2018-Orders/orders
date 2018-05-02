@@ -15,7 +15,7 @@ from app.models import Item, Order, DataValidationError
 from datetime import datetime
 from mock import MagicMock, patch
 
-DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root@localhost:3306/development')
+DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:passw0rd@localhost:3306/development')
 
 # Status Codes
 HTTP_200_OK = 200
@@ -54,7 +54,7 @@ class TestServer(unittest.TestCase):
         date = datetime.now()
 
 
-        order = Order(customer_id=1, date=date, status = 'processing').save() 
+        order = Order(customer_id=1, date=date, status = 'processing').save()
         order = Order(customer_id=2, date=date, status = 'processing').save()
 
         order1 = Order()

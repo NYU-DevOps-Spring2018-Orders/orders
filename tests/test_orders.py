@@ -12,7 +12,7 @@ from app.models import Order, DataValidationError
 from datetime import datetime
 from werkzeug.exceptions import NotFound
 
-DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root@localhost:3306/development')
+DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:passw0rd@localhost:3306/development')
 
 ######################################################################
 #  T E S T   C A S E S
@@ -139,7 +139,7 @@ class TestOrders(unittest.TestCase):
 
         date_converted = str(date.year) + "-" + str(date.month) + "-" + str(date.day) + "T" + \
                          str(date.hour) + ":" + str(date.minute)
-        
+
         date_converted = datetime.strptime(date_converted, "%Y-%m-%dT%H:%M")
 
         order = Order(customer_id=1, date=date_converted, status = 'processing')
