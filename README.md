@@ -9,7 +9,7 @@ Our team handled the order process of a retail website.  Functions are built to 
 
 ## Structure
 
--   Two classes Order and Item.  An Item object represents an item from an associated order. 
+-   Two classes Order and Item.  An Item object represents an item from an associated order.
     - Order: id (auto generated), customer_id, status, date
     - Item: id (auto generated), product_id, order_id, name, quantity, price
 -   Status has 3 states - processing (initial state), cancelled, shipped
@@ -46,7 +46,8 @@ After the required software is installed, you can start up the orders service by
     vagrant up
     vagrant ssh
     cd /vagrant
-    
+    export DATABASE_URI='mysql+pymysql://root:passw0rd@localhost:3306/test'
+
 Then run the following command while running the VM...
 
     python server.py
@@ -59,21 +60,21 @@ Note there is a test json with the expected fields for the service...
 
 ## REST API Functions
 
--  CREATE - takes the JSON and creates the order and item details for their respective tables 
-   - `POST http://localhost:5000/orders` 
--  GET - Gets the details of a specific order 
+-  CREATE - takes the JSON and creates the order and item details for their respective tables
+   - `POST http://localhost:5000/orders`
+-  GET - Gets the details of a specific order
    - `GET http://localhost:5000/orders/{id}`  
--  GET - Get details of a specific item: 
+-  GET - Get details of a specific item:
    - `GET http://localhost:5000/items/{id}`
--  LIST - All orders in the system: 
+-  LIST - All orders in the system:
    - `GET http://localhost:5000/orders`
--  LIST - All items in the system: 
+-  LIST - All items in the system:
    - `GET http://localhost:5000/items`
--  LIST - Items from a specified order: 
+-  LIST - Items from a specified order:
    - `GET http://localhost:5000/orders/{id}/items`
--  DELETE - deletes an order and its items: 
+-  DELETE - deletes an order and its items:
    - `DELETE http://localhost:5000/orders/{id}`
--  DELETE - deletes an item from an order: 
+-  DELETE - deletes an item from an order:
    - `DELETE http://localhost:5000/orders/{id}/items/{id}`
 -  ACTION - cancel an order:
    - `PUT http://localhost:5000/orders/{id}/cancel`
@@ -90,4 +91,3 @@ Note there is a test json with the expected fields for the service...
 ## Testing
 
 `nosetests` can be used after starting the VM and switching to the Vagrant directory.  This checks coverage on both `models.py` and `server.py`.  No argument needed regardless of Windows or MacOS
-
