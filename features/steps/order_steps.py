@@ -82,7 +82,13 @@ def step_impl(context, element_name, text_string):
 @when(u'I press the "{button}" order button')
 def step_impl(context, button):
     button_id = button.lower() + '-btn'
-    context.driver.find_element_by_id(button_id).click()
+
+    found = WebDriverWait(context.driver, WAIT_SECONDS).until(
+        expected_conditions.element_to_be_clickable(
+            (By.CSS_SELECTOR, '#' + button_id)
+        )
+    )
+    found.click()
 
 @then(u'I should see "{name}" in the order results')
 def step_impl(context, name):
@@ -117,7 +123,13 @@ def step_impl(context, message):
 @when(u'I press the "{button}" item button')
 def step_impl(context, button):
     button_id = button.lower() + '-btn-item'
-    context.driver.find_element_by_id(button_id).click()
+
+    found = WebDriverWait(context.driver, WAIT_SECONDS).until(
+        expected_conditions.element_to_be_clickable(
+            (By.CSS_SELECTOR, '#' + button_id)
+        )
+    )
+    found.click()
 
 @then(u'I should see "{name}" in the item results')
 def step_impl(context, name):
