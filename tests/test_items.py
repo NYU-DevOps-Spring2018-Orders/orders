@@ -12,7 +12,7 @@ from app import app, db
 from app.models import Order, Item, DataValidationError
 from werkzeug.exceptions import NotFound
 
-DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:passw0rd@localhost:3306/development')
+DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root@localhost:3306/development')
 
 ######################################################################
 #  T E S T   C A S E S
