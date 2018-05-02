@@ -15,7 +15,7 @@ from app.models import Item, Order, DataValidationError
 from datetime import datetime
 from mock import MagicMock, patch
 
-DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root@localhost:3306/development')
+DATABASE_URI = os.getenv('DATABASE_URI', 'mysql+pymysql://root:passw0rd@localhost:3306/development')
 
 # Status Codes
 HTTP_200_OK = 200
